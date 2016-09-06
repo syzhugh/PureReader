@@ -12,10 +12,12 @@ import java.util.HashMap;
 
 public class FragmentFactory {
     public static HashMap<Integer, BaseFragment> mFragments = new HashMap<>();
-    public static BaseFragment createFragment(int position,String url) {
+
+    public static BaseFragment createFragment(int position) {
         BaseFragment fragment = mFragments.get(position);
         if (fragment == null) {
-            fragment=new CommNewsFragment(url);
+//            fragment = new CommNewsFragment(url);
+            fragment=new CommNewsFragment();
         }
         if (fragment != null) {
             mFragments.put(position, fragment);

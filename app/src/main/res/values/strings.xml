@@ -3,4 +3,14 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
+    <string-array name="tabTitles">
+        <item>头条</item>
+        <item>汽车</item>
+        <item>房产</item>
+        <item>科技</item>
+        <item>星座</item>
+        <item>旅游</item>
+        <item>时尚</item>
+        <item>娱乐</item>
+    </string-array>
 </resources>
