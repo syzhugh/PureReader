@@ -11,11 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+
 import com.zdfy.purereader.R;
-import com.zdfy.purereader.ui.fragment.BaseFragment;
 import com.zdfy.purereader.ui.fragment.NewsFragment;
 import com.zdfy.purereader.ui.fragment.PicFragment;
 import com.zdfy.purereader.ui.fragment.VideoFragment;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -28,9 +29,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout mDrawerLayout;
     @Bind(R.id.fl_container)
     FrameLayout mFlContainer;
-    private BaseFragment mNewsFragment;
-    private BaseFragment mPicFragment;
-    private BaseFragment mVideoFragment;
+    private NewsFragment mNewsFragment;
+    private PicFragment mPicFragment;
+    private VideoFragment mVideoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.fl_container, mNewsFragment);
         fragmentTransaction.commit();
+
     }
 
     private void initViews() {
@@ -98,18 +100,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragmentTransaction.add(R.id.fl_container, mNewsFragment);
             }
             fragmentTransaction.show(mNewsFragment);
+
+
         } else if (id == R.id.nav_pic) {
             if (mPicFragment == null) {
                 mPicFragment = new PicFragment();
                 fragmentTransaction.add(R.id.fl_container, mPicFragment);
             }
             fragmentTransaction.show(mPicFragment);
+
         } else if (id == R.id.nav_video) {
             if (mVideoFragment == null) {
                 mVideoFragment = new VideoFragment();
                 fragmentTransaction.add(R.id.fl_container, mVideoFragment);
             }
             fragmentTransaction.show(mVideoFragment);
+
         }
         fragmentTransaction.commit();
         mDrawerLayout.closeDrawer(GravityCompat.START);

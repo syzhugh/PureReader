@@ -20,40 +20,41 @@ import static com.zdfy.purereader.constant.Constant.STATE_LOAD_UNDO;
 
 public abstract class LoadingPage extends FrameLayout {
     private int mCurrentState = STATE_LOAD_UNDO;// 当前状态
-
     private View mLoadingPage;
     private View mErrorPage;
     private View mEmptyPage;
     private View mSuccessPage;
-
-    public LoadingPage(Context context) {
-        this(context, null);
+    public LoadingPage(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        initView();
     }
     public LoadingPage(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        initView();
     }
-    public LoadingPage(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        initViews();
+    public LoadingPage(Context context) {
+        super(context);
+        initView();
     }
-    private void initViews() {
-        // 将加载中的布局添加给当前的帧布局
+    private void initView() {
+        // 初始化加载中的布局
         if (mLoadingPage == null) {
             mLoadingPage = UiUtils.inflate(R.layout.page_loading);
-            addView(mLoadingPage);
+            addView(mLoadingPage);// 将加载中的布局添加给当前的帧布局
         }
-        //初始化加载失败布局
+
+        // 初始化加载失败布局
         if (mErrorPage == null) {
             mErrorPage = UiUtils.inflate(R.layout.page_error);
             addView(mErrorPage);
         }
-        //初始化加载空布局
+
+        // 初始化数据为空布局
         if (mEmptyPage == null) {
             mEmptyPage = UiUtils.inflate(R.layout.page_empty);
             addView(mEmptyPage);
         }
         showPage();
-
     }
 
     /**
@@ -62,13 +63,17 @@ public abstract class LoadingPage extends FrameLayout {
     private void showPage() {
         mLoadingPage
                 .setVisibility((mCurrentState == STATE_LOAD_UNDO || mCurrentState == STATE_LOAD_LOADING) ? View.VISIBLE
-                        : GONE);
+                        : View.GONE);
+
         mErrorPage
-                .setVisibility(mCurrentState == STATE_LOAD_ERROR ? VISIBLE
-                        : GONE);
+                .setVisibility(mCurrentState == STATE_LOAD_ERROR ? View.VISIBLE
+                        : View.GONE);
+
         mEmptyPage
-                .setVisibility(mCurrentState == STATE_LOAD_EMPTY ? VISIBLE
-                        : GONE);
+                .setVisibility(mCurrentState == STATE_LOAD_EMPTY ? View.VISIBLE
+                        : View.GONE);
+
+        // 当成功布局为空,并且当前状态为成功,才初始化成功的布局
         if (mSuccessPage == null && mCurrentState == STATE_LOAD_SUCCESS) {
             mSuccessPage = onCreateSuccessView();
             if (mSuccessPage != null) {
@@ -76,7 +81,9 @@ public abstract class LoadingPage extends FrameLayout {
             }
         }
         if (mSuccessPage != null) {
-            mSuccessPage.setVisibility(mCurrentState == STATE_LOAD_SUCCESS ? VISIBLE : GONE);
+            mSuccessPage
+                    .setVisibility(mCurrentState == STATE_LOAD_SUCCESS ? View.VISIBLE
+                            : View.GONE);
         }
     }
 
@@ -87,10 +94,15 @@ public abstract class LoadingPage extends FrameLayout {
      */
     //创建成功的界面
     protected abstract View onCreateSuccessView();
-    
-    //返回结果的状态
+
+    /**
+     * 加载网络数据,返回请求网络结束后的状态
+     */
     protected abstract ResultState onLoad();
 
+    /**
+     * 枚举类型的状态
+     */
     public enum ResultState {
         STATE_SUCCESS(STATE_LOAD_SUCCESS),
         STATE_EMPTY(STATE_LOAD_EMPTY),
@@ -105,4 +117,32 @@ public abstract class LoadingPage extends FrameLayout {
             return state;
         }
     }
+
+    /**
+     * 开始加载数据
+     */
+    public void loadData() {
+        if (mCurrentState != STATE_LOAD_LOADING) {
+            mCurrentState = STATE_LOAD_LOADING;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final ResultState resultState = onLoad();
+                    //运行在Ui线程
+                    UiUtils.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (resultState != null) {
+                                mCurrentState = resultState.getState();
+                                //根据状态显示界面
+                                showPage();
+                            }
+                        }
+                    });
+
+                }
+            }).start();
+        }
+    }
+
 }
