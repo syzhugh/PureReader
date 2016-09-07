@@ -1,5 +1,4 @@
 package com.zdfy.purereader.ui.activity;
-
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -116,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             fragmentTransaction.show(mVideoFragment);
 
+        }else if (id==R.id.nav_about){
+            
         }
         fragmentTransaction.commit();
         mDrawerLayout.closeDrawer(GravityCompat.START);

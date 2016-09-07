@@ -19,7 +19,7 @@ public class MainPageAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return FragmentFactory.createFragment(position);
+        return FragmentFactory.createFragment(position,titles[position]);
     }
     @Override
     public int getCount() {

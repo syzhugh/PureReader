@@ -3,6 +3,8 @@ package com.zdfy.purereader.application;
 import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
+
+import org.xutils.x;
 /**
  * Created by ZhangPeng on 2016/9/5.
  */
@@ -18,6 +20,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        x.Ext.init(this);
         context = getApplicationContext();
         handler = new Handler();
         //拿到当前线程的id

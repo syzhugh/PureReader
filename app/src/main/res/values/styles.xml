@@ -20,4 +20,14 @@
         <item name="android:textSize">@dimen/text_16_sp</item>
     </style>
     <dimen name="text_16_sp">20sp</dimen>
+    <dimen name="cardview_margin">8dp</dimen>
+
+
+    <!--卡片布局-->
+    <style name="CardViewTheme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/cardview_margin</item>
+    </style>
+
 </resources>

@@ -29,7 +29,7 @@ public class NewsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = View.inflate(getActivity(), R.layout.fragment_commnews, null);
+        View view = View.inflate(getActivity(), R.layout.fragment_news, null);
         ButterKnife.bind(this, view);
         tabTitles = UiUtils.getStringArray(R.array.tabTitles);
         MainPageAdapter adapter = new MainPageAdapter(getActivity().getSupportFragmentManager(), tabTitles);
@@ -43,7 +43,7 @@ public class NewsFragment extends Fragment {
         mTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                BaseFragment fragment = FragmentFactory.createFragment(tab.getPosition());
+                BaseFragment fragment = FragmentFactory.createFragment(tab.getPosition(), tabTitles[tab.getPosition()]);
                 fragment.loadData();
             }
 
@@ -57,5 +57,6 @@ public class NewsFragment extends Fragment {
 
             }
         });
-        return view;  }
+        return view;
+    }
 }

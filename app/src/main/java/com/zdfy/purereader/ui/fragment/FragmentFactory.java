@@ -13,11 +13,13 @@ import java.util.HashMap;
 public class FragmentFactory {
     public static HashMap<Integer, BaseFragment> mFragments = new HashMap<>();
 
-    public static BaseFragment createFragment(int position) {
+    public static BaseFragment createFragment(int position, String name) {
         BaseFragment fragment = mFragments.get(position);
         if (fragment == null) {
-//            fragment = new CommNewsFragment(url);
-            fragment=new CommNewsFragment();
+            /**
+             * 根据channel创建不同的Fragment
+             */
+            fragment = new CommNewsFragment(name);
         }
         if (fragment != null) {
             mFragments.put(position, fragment);
