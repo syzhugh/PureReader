@@ -41,7 +41,9 @@ public class CommNewsFragment extends BaseFragment {
     private LinearLayoutManager layoutManager;
     private List<ContentlistEntity> contentlist;
     private int mCurrentPage = 1;
-    private int mCurrentMaxResult = 20;
+    private int mCurrentMaxResult = 10;
+    boolean isLoading;
+    private int addDatasType=1;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -50,8 +52,17 @@ public class CommNewsFragment extends BaseFragment {
                 mAdapter = new NewsAdapter(contentlist);
                 mRecyclerView.setAdapter(mAdapter);
             }
-            contentlist.addAll((List<ContentlistEntity>) msg.obj);
-            mAdapter.notifyDataSetChanged();
+            if (addDatasType == 1) {
+                contentlist.addAll(0, (List<ContentlistEntity>) msg.obj);
+                mAdapter.notifyItemRangeInserted(0,((List<ContentlistEntity>) msg.obj).size());
+            }
+            if (addDatasType == 2) {
+                int position=contentlist.size()-1;
+                contentlist.addAll((List<ContentlistEntity>) msg.obj);
+                mAdapter.notifyItemRangeInserted(position,((List<ContentlistEntity>) msg.obj).size());
+            }
+
+            mSwipeRefreshLayout.setRefreshing(false);
             super.handleMessage(msg);
         }
     };
@@ -69,22 +80,49 @@ public class CommNewsFragment extends BaseFragment {
     protected View onCreateSuccessView() {
         View view = UiUtils.inflate(R.layout.fragment_commnews);
         ButterKnife.bind(this, view);
+        layoutManager = new LinearLayoutManager(UiUtils.getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.blueStatus);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mCurrentMaxResult += 20;
-                if (mCurrentMaxResult >= 100) {
-                    mCurrentMaxResult = 20;
-                    mCurrentPage++;
-                }
-                String url = ApiConstants.getHttpUrlByChannelName(channelName, mCurrentPage, mCurrentMaxResult);
-                getDataFromNet(url);
+                addDatasType = 1;
+                RefreshDatas();
             }
         });
-        layoutManager = new LinearLayoutManager(UiUtils.getContext());
-        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                if (lastVisibleItemPosition + 1 == mAdapter.getItemCount()) {
+                    boolean refreshing = mSwipeRefreshLayout.isRefreshing();
+                    if (refreshing) {
+                        mAdapter.notifyItemRemoved(mAdapter.getItemCount());
+                        return;
+                    }
+                    if (!isLoading) {
+                        isLoading = true;
+                        addDatasType = 2;
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                RefreshDatas();
+                                isLoading = false;
+                            }
+                        }, 500);
+                    }
+
+                }
+            }
+        });
         getDataFromNet(ApiConstants.getHttpUrlByChannelName(channelName, mCurrentPage, mCurrentMaxResult));
+
 //        RequestParams params=new RequestParams(ApiConstants.getHttpUrlByChannelName(channelName));
 //        x.http().post(params, new Callback.CommonCallback<String>() {
 //            @Override
@@ -118,11 +156,25 @@ public class CommNewsFragment extends BaseFragment {
         return view;
     }
 
+    private void RefreshDatas() {
+        mCurrentMaxResult += 10;
+        if (mCurrentMaxResult >= 100) {
+            mCurrentPage++;
+            mCurrentMaxResult = 10;
+        }
+        if (mCurrentPage>1){
+            mCurrentMaxResult=10;
+        }
+        String url = ApiConstants.getHttpUrlByChannelName(channelName, mCurrentPage, mCurrentMaxResult);
+        getDataFromNet(url);
+    }
+
     private void getDataFromNet(final String url) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String result = HttpUtils.doPost(url, null);
+                System.out.println(result);
                 if (result != null) {
                     NewsInfo newsInfo = JSON.parseObject(result, NewsInfo.class);
                     List<ContentlistEntity> mdatas = newsInfo.getShowapi_res_body().getPagebean().getContentlist();
