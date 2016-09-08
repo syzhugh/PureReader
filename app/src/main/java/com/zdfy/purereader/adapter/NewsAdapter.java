@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.zdfy.purereader.R;
@@ -48,11 +49,12 @@ public class NewsAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ItemViewHolder) {
+          
             if (datas.get(position).getImageurls() != null) {
                 if (datas.get(position).getImageurls().size()!= 0) {
                     x.image().bind(((ItemViewHolder) holder).mIvNews, datas.get(position).getImageurls().get(0).getUrl());
                 }else{
-                 return;   
+                    return;
                 }
             }
                 ((ItemViewHolder) holder).mTvPubDate.setText(datas.get(position).getPubDate());
@@ -78,7 +80,8 @@ public class NewsAdapter extends RecyclerView.Adapter {
             TextView mTvPubDate;
             @Bind(R.id.iv_news)
             ImageView mIvNews;
-
+            @Bind(R.id.rl_item)
+            RelativeLayout mRlItem;
             ItemViewHolder(View view) {
                 super(view);
                 ButterKnife.bind(this, view);

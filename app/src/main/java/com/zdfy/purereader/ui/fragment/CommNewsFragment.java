@@ -41,9 +41,9 @@ public class CommNewsFragment extends BaseFragment {
     private LinearLayoutManager layoutManager;
     private List<ContentlistEntity> contentlist;
     private int mCurrentPage = 1;
-    private int mCurrentMaxResult = 10;
+    private int mCurrentMaxResult = 20;
     boolean isLoading;
-    private int addDatasType=1;
+    private int addDatasType = 1;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -52,16 +52,17 @@ public class CommNewsFragment extends BaseFragment {
                 mAdapter = new NewsAdapter(contentlist);
                 mRecyclerView.setAdapter(mAdapter);
             }
+           
             if (addDatasType == 1) {
-                contentlist.addAll(0, (List<ContentlistEntity>) msg.obj);
-                mAdapter.notifyItemRangeInserted(0,((List<ContentlistEntity>) msg.obj).size());
+                contentlist.addAll(0, (List<ContentlistEntity>)msg.obj);
+                System.out.println(contentlist.size());
+                mAdapter.notifyItemRangeInserted(0, ((List<ContentlistEntity>) msg.obj).size());
             }
             if (addDatasType == 2) {
-                int position=contentlist.size()-1;
-                contentlist.addAll((List<ContentlistEntity>) msg.obj);
-                mAdapter.notifyItemRangeInserted(position,((List<ContentlistEntity>) msg.obj).size());
+                int position = contentlist.size() - 1;
+                contentlist.addAll((List<ContentlistEntity>)msg.obj);
+                mAdapter.notifyItemRangeInserted(position, ((List<ContentlistEntity>)msg.obj).size());
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
             super.handleMessage(msg);
         }
@@ -70,12 +71,10 @@ public class CommNewsFragment extends BaseFragment {
     public CommNewsFragment(String channelName) {
         this.channelName = channelName;
     }
-
     @Override
     protected ResultState onLoad() {
         return ResultState.STATE_SUCCESS;
     }
-
     @Override
     protected View onCreateSuccessView() {
         View view = UiUtils.inflate(R.layout.fragment_commnews);
@@ -83,6 +82,8 @@ public class CommNewsFragment extends BaseFragment {
         layoutManager = new LinearLayoutManager(UiUtils.getContext());
         mRecyclerView.setLayoutManager(layoutManager);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.blueStatus);
+        mSwipeRefreshLayout.setRefreshing(true);
+        getDataFromNet(ApiConstants.getHttpUrlByChannelName(channelName, mCurrentPage, mCurrentMaxResult));
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -121,7 +122,6 @@ public class CommNewsFragment extends BaseFragment {
                 }
             }
         });
-        getDataFromNet(ApiConstants.getHttpUrlByChannelName(channelName, mCurrentPage, mCurrentMaxResult));
 
 //        RequestParams params=new RequestParams(ApiConstants.getHttpUrlByChannelName(channelName));
 //        x.http().post(params, new Callback.CommonCallback<String>() {
@@ -157,13 +157,10 @@ public class CommNewsFragment extends BaseFragment {
     }
 
     private void RefreshDatas() {
-        mCurrentMaxResult += 10;
-        if (mCurrentMaxResult >= 100) {
+        mCurrentMaxResult += 20;
+        if (mCurrentMaxResult > 100) {
             mCurrentPage++;
-            mCurrentMaxResult = 10;
-        }
-        if (mCurrentPage>1){
-            mCurrentMaxResult=10;
+            mCurrentMaxResult = 20;
         }
         String url = ApiConstants.getHttpUrlByChannelName(channelName, mCurrentPage, mCurrentMaxResult);
         getDataFromNet(url);
@@ -174,13 +171,16 @@ public class CommNewsFragment extends BaseFragment {
             @Override
             public void run() {
                 String result = HttpUtils.doPost(url, null);
-                System.out.println(result);
                 if (result != null) {
                     NewsInfo newsInfo = JSON.parseObject(result, NewsInfo.class);
-                    List<ContentlistEntity> mdatas = newsInfo.getShowapi_res_body().getPagebean().getContentlist();
-                    Message message = new Message();
-                    message.obj = mdatas;
-                    mHandler.sendMessage(message);
+
+                    if (newsInfo != null) {
+                        List<ContentlistEntity> mdatas = newsInfo.getShowapi_res_body().getPagebean().getContentlist();
+                        Message message = new Message();
+                        message.obj = mdatas;
+                        mHandler.sendMessage(message);
+                    }
+
                 }
             }
         }).start();

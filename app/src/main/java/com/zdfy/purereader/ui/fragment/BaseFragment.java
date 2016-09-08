@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import com.zdfy.purereader.ui.view.LoadingPage;
 import com.zdfy.purereader.utils.UiUtils;
 
-import butterknife.ButterKnife;
-
 /**
  * Created by ZhangPeng on 2016/9/5.
  */
@@ -26,7 +24,6 @@ public abstract class BaseFragment extends Fragment {
             protected View onCreateSuccessView() {
                 return BaseFragment.this.onCreateSuccessView();
             }
-
             @Override
             protected ResultState onLoad() {
                 return BaseFragment.this.onLoad();
@@ -48,13 +45,6 @@ public abstract class BaseFragment extends Fragment {
      * @return
      */
     protected abstract View onCreateSuccessView();
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
-    }
-
     public void loadData() {
         if (mLoadingPage != null) {
             mLoadingPage.loadData();
