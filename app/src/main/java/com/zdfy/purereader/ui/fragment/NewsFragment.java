@@ -37,8 +37,10 @@ public class NewsFragment extends Fragment {
         View view = View.inflate(getActivity(), R.layout.fragment_news, null);
         ButterKnife.bind(this, view);
         tabTitles = UiUtils.getStringArray(R.array.tabTitles);
-        MainPageAdapter adapter = new MainPageAdapter(getActivity().getSupportFragmentManager(), tabTitles);
+        MainPageAdapter adapter = new MainPageAdapter(getChildFragmentManager(), tabTitles);
         mViewpager.setAdapter(adapter);
+        //fragment页面预加载,解决数据丢失的问题
+        mViewpager.setOffscreenPageLimit(10);
         mTabs.post(new Runnable() {
             @Override
             public void run() {

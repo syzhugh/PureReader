@@ -29,8 +29,6 @@ import butterknife.ButterKnife;
  */
 @SuppressLint("ValidFragment")
 public class CommNewsFragment extends BaseFragment {
-    //    @Bind(R.id.banner)
-//    Banner mBanner;
     @Bind(R.id.recyclerView)
     RecyclerView mRecyclerView;
     @Bind(R.id.swipeRefreshLayout)
@@ -65,6 +63,9 @@ public class CommNewsFragment extends BaseFragment {
                 int position = contentlist.size() - 1;
                 contentlist.addAll(tempDatas);
                 mAdapter.notifyItemRangeInserted(position, tempDatas.size());
+            }
+            if (contentlist==null){
+                System.out.println(contentlist==null);
             }
             System.out.println(contentlist.size());
             mSwipeRefreshLayout.setRefreshing(false);
@@ -133,8 +134,8 @@ public class CommNewsFragment extends BaseFragment {
 
     private void RefreshDatas() {
         mCurrentMaxResult += 20;
+        mCurrentPage += 1;
         if (mCurrentMaxResult > 100) {
-            mCurrentPage += 1;
             mCurrentMaxResult = 20;
         }
         String url = ApiConstants.getHttpUrlByChannelName(channelName, mCurrentPage, mCurrentMaxResult);

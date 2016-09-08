@@ -2,6 +2,7 @@ package com.zdfy.purereader.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.ViewGroup;
 
 import com.zdfy.purereader.ui.fragment.FragmentFactory;
 
@@ -11,12 +12,10 @@ import com.zdfy.purereader.ui.fragment.FragmentFactory;
 
 public class MainPageAdapter extends FragmentPagerAdapter {
     private String[] titles;
-
     public MainPageAdapter(FragmentManager fm,String[] titles) {
         super(fm);
         this.titles=titles;
     }
-
     @Override
     public Fragment getItem(int position) {
         return FragmentFactory.createFragment(position,titles[position]);
@@ -28,5 +27,10 @@ public class MainPageAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return titles[position];
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        return super.instantiateItem(container, position);
     }
 }
