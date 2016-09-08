@@ -24,6 +24,7 @@ package com.zdfy.purereader.ui.qrcode.utils;
  */
 public class Constants {
 
+
     public static final int ID_START = 0X100;
     public static final int ID_RESTART_PREVIEW = ID_START + 10;
     public static final int ID_DECODE = ID_START + 20;

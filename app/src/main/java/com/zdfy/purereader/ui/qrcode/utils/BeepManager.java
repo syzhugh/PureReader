@@ -26,12 +26,14 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.github.obsessive.simplifyreader.R;
+
+import com.zdfy.purereader.R;
 
 import java.io.Closeable;
 import java.io.IOException;
 
 public class BeepManager implements MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, Closeable {
+
 
     private static final String TAG = BeepManager.class.getSimpleName();
 

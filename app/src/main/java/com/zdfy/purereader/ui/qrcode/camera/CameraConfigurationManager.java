@@ -36,6 +36,7 @@ public final class CameraConfigurationManager {
     private Point screenResolution;
     private Point cameraResolution;
 
+
     CameraConfigurationManager(Context context) {
         this.context = context;
     }

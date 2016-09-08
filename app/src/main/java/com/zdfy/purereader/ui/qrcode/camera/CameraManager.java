@@ -23,7 +23,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.github.obsessive.simplifyreader.ui.activity.qrcode.camera.open.OpenCameraInterface;
+
+import com.zdfy.purereader.ui.qrcode.camera.open.OpenCameraInterface;
 
 import java.io.IOException;
 
@@ -37,6 +38,7 @@ import java.io.IOException;
 public final class CameraManager {
 
     private static final String TAG = CameraManager.class.getSimpleName();
+
 
     private final CameraConfigurationManager configManager;
     private Camera camera;

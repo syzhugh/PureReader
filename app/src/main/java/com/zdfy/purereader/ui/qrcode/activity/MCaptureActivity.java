@@ -17,6 +17,7 @@ public class MCaptureActivity extends AppCompatActivity {
 
     /*view*/
 
+
     /*核心*/
 
     /*相机*/

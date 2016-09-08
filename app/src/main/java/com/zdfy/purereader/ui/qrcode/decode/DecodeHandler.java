@@ -33,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 
 public final class DecodeHandler extends Handler {
 
+
     private static final String TAG = DecodeHandler.class.getSimpleName();
 
     private final MCaptureActivity activity;

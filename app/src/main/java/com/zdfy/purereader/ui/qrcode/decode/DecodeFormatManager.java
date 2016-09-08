@@ -24,6 +24,7 @@ import java.util.Set;
 
 public class DecodeFormatManager {
 
+
     private static final Set<BarcodeFormat> PRODUCT_FORMATS;
     private static final Set<BarcodeFormat> INDUSTRIAL_FORMATS;
     private static final Set<BarcodeFormat> ONE_D_FORMATS;

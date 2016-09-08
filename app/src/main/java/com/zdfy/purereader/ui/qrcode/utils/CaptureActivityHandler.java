@@ -32,8 +32,6 @@ import com.zdfy.purereader.ui.qrcode.decode.DecodeThread;
 public final class CaptureActivityHandler extends Handler {
 
 
-
-
     private final MCaptureActivity activity;
     private final DecodeThread decodeThread;
     private State state;
