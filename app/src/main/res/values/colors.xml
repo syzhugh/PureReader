@@ -10,4 +10,5 @@
 
     <!--qrcode_shade-->
     <color name="cap_shade_color">#aa000000</color>
+    <color name="cap_shade_error">#000</color>
 </resources>

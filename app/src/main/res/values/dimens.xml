@@ -13,6 +13,6 @@
     <dimen name="qrcode_width">220dp</dimen>
     <dimen name="qrcode_height">220dp</dimen>
     <!--barcode-->
-    <dimen name="barcode_width">250dp</dimen>
-    <dimen name="barcode_height">110dp</dimen>
+    <dimen name="barcode_width">260dp</dimen>
+    <dimen name="barcode_height">140dp</dimen>
 </resources>
