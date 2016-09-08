@@ -6,4 +6,8 @@
     <color name="colorWhite">#fff</color>
     <color name="colorBlack">#000</color>
     <color name="blueStatus">#1680E2</color>
+
+
+    <!--qrcode_shade-->
+    <color name="cap_shade_color">#aa000000</color>
 </resources>
