@@ -52,17 +52,21 @@ public class CommNewsFragment extends BaseFragment {
                 mAdapter = new NewsAdapter(contentlist);
                 mRecyclerView.setAdapter(mAdapter);
             }
-           
+            List<ContentlistEntity> msgDatas = (List<ContentlistEntity>) msg.obj;
+            List<ContentlistEntity> tempDatas = new ArrayList<>();
+            for (int i = msgDatas.size() - 20; i < msgDatas.size(); i++) {
+                tempDatas.add(msgDatas.get(i));
+            }
             if (addDatasType == 1) {
-                contentlist.addAll(0, (List<ContentlistEntity>)msg.obj);
-                System.out.println(contentlist.size());
-                mAdapter.notifyItemRangeInserted(0, ((List<ContentlistEntity>) msg.obj).size());
+                contentlist.addAll(0, tempDatas);
+                mAdapter.notifyItemRangeInserted(0, tempDatas.size());
             }
             if (addDatasType == 2) {
                 int position = contentlist.size() - 1;
-                contentlist.addAll((List<ContentlistEntity>)msg.obj);
-                mAdapter.notifyItemRangeInserted(position, ((List<ContentlistEntity>)msg.obj).size());
+                contentlist.addAll(tempDatas);
+                mAdapter.notifyItemRangeInserted(position, tempDatas.size());
             }
+            System.out.println(contentlist.size());
             mSwipeRefreshLayout.setRefreshing(false);
             super.handleMessage(msg);
         }
@@ -71,10 +75,12 @@ public class CommNewsFragment extends BaseFragment {
     public CommNewsFragment(String channelName) {
         this.channelName = channelName;
     }
+
     @Override
     protected ResultState onLoad() {
         return ResultState.STATE_SUCCESS;
     }
+
     @Override
     protected View onCreateSuccessView() {
         View view = UiUtils.inflate(R.layout.fragment_commnews);
@@ -122,44 +128,13 @@ public class CommNewsFragment extends BaseFragment {
                 }
             }
         });
-
-//        RequestParams params=new RequestParams(ApiConstants.getHttpUrlByChannelName(channelName));
-//        x.http().post(params, new Callback.CommonCallback<String>() {
-//            @Override
-//            public void onSuccess(String result) {
-//                System.out.println(result);
-//                if (result!=null){
-//                    NewsInfo newsInfo= JSON.parseObject(result, NewsInfo.class);
-//                     contentlist = newsInfo.getShowapi_res_body().getPagebean().getContentlist();
-//                    System.out.println(contentlist.size());
-//                    mAdapter=new NewsAdapter(contentlist);
-//                    mRecyclerView.setAdapter(mAdapter);
-//                }
-//            
-//            }
-//
-//            @Override
-//            public void onError(Throwable ex, boolean isOnCallback) {
-//                Toast.makeText(UiUtils.getContext(), "ERROR", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onCancelled(CancelledException cex) {
-//
-//            }
-//
-//            @Override
-//            public void onFinished() {
-//
-//            }
-//        });
         return view;
     }
 
     private void RefreshDatas() {
         mCurrentMaxResult += 20;
         if (mCurrentMaxResult > 100) {
-            mCurrentPage++;
+            mCurrentPage += 1;
             mCurrentMaxResult = 20;
         }
         String url = ApiConstants.getHttpUrlByChannelName(channelName, mCurrentPage, mCurrentMaxResult);
