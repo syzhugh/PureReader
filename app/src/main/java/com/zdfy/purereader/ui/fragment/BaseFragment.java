@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import com.zdfy.purereader.ui.view.LoadingPage;
 import com.zdfy.purereader.utils.UiUtils;
 
+import java.util.List;
+
 /**
  * Created by ZhangPeng on 2016/9/5.
  */
@@ -24,6 +26,7 @@ public abstract class BaseFragment extends Fragment {
             protected View onCreateSuccessView() {
                 return BaseFragment.this.onCreateSuccessView();
             }
+
             @Override
             protected ResultState onLoad() {
                 return BaseFragment.this.onLoad();
@@ -45,9 +48,30 @@ public abstract class BaseFragment extends Fragment {
      * @return
      */
     protected abstract View onCreateSuccessView();
+
     public void loadData() {
         if (mLoadingPage != null) {
             mLoadingPage.loadData();
         }
+    }
+
+    /**
+     * 根据返回的数据判断状态
+     * @param obj
+     * @return
+     */
+    public LoadingPage.ResultState CheckData(Object obj) {
+        if (obj != null) {
+            if (obj instanceof List) {
+                List data = (List) obj;
+                if (data.isEmpty()) {
+                    return LoadingPage.ResultState.STATE_EMPTY;
+                } else {
+                    return LoadingPage.ResultState.STATE_SUCCESS;
+                }
+            }
+        }
+
+        return LoadingPage.ResultState.STATE_ERROR;
     }
 }

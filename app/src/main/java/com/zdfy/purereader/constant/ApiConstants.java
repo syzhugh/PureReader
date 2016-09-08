@@ -17,6 +17,7 @@ public class ApiConstants {
 
     public static String showapi_appid = "22587";
     public static String showapi_sign = "8d739c2d3b854178957cf8e9de3e9371";
+    public static String Base_Url = "https://route.showapi.com/109-35?channelName=";
     String HttpFromUrl =
             "https://route.showapi.com/109-35?channelName=" +
                     "国内" +
@@ -24,10 +25,14 @@ public class ApiConstants {
                     "1" +
                     "&maxResult=" +
                     "20" +
-                    "&needHtml=1&needAllList=0&" +
+                    "&needHtml=0&needAllList=0&" +
                     "showapi_appid=" + showapi_appid +
                     "&showapi_sign=" + showapi_sign;
 
+    public static String CacheSuffix= "&needHtml=0"
+            + "&needAllList=0&"
+            + "showapi_appid=" + showapi_appid
+            + "&showapi_sign=" + showapi_sign;
     /**
      * 通过频道名称返回地址
      *
@@ -46,7 +51,7 @@ public class ApiConstants {
                 + "showapi_appid=" + showapi_appid
                 + "&showapi_sign=" + showapi_sign;
     }
-    
+
     public static String getHttpUrlByChannelName(String channelName, int page, int maxResult) {
         return "https://route.showapi.com/109-35?channelName="
                 + channelName
@@ -58,5 +63,11 @@ public class ApiConstants {
                 + "&needAllList=0&"
                 + "showapi_appid=" + showapi_appid
                 + "&showapi_sign=" + showapi_sign;
+    }
+
+    public static String ModifyCacheUrl(String UrlForName) {
+        UrlForName = UrlForName.replace(ApiConstants.Base_Url, "CacheJson");
+        UrlForName = UrlForName.replace(ApiConstants.CacheSuffix, "CacheSuffix");
+        return UrlForName;
     }
 }
