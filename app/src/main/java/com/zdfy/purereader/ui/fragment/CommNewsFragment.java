@@ -8,15 +8,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.alibaba.fastjson.JSON;
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.adapter.NewsAdapter;
 import com.zdfy.purereader.constant.ApiConstants;
-import com.zdfy.purereader.domain.NewsInfo;
 import com.zdfy.purereader.domain.NewsInfo.ShowapiResBodyEntity.PagebeanEntity.ContentlistEntity;
 import com.zdfy.purereader.ui.view.LoadingPage.ResultState;
-import com.zdfy.purereader.utils.HttpUtils;
 import com.zdfy.purereader.utils.UiUtils;
+import com.zdfy.purereader.utils.protocol.NewsProtocol;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +31,6 @@ public class CommNewsFragment extends BaseFragment {
     RecyclerView mRecyclerView;
     @Bind(R.id.swipeRefreshLayout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    private List<ContentlistEntity> datas;
     private NewsAdapter mAdapter;
     private String channelName;
     private LinearLayoutManager layoutManager;
@@ -42,6 +39,7 @@ public class CommNewsFragment extends BaseFragment {
     private int mCurrentMaxResult = 20;
     boolean isLoading;
     private int addDatasType = 1;
+    private ResultState resultState;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -52,50 +50,63 @@ public class CommNewsFragment extends BaseFragment {
             }
             List<ContentlistEntity> msgDatas = (List<ContentlistEntity>) msg.obj;
             List<ContentlistEntity> tempDatas = new ArrayList<>();
-            for (int i = msgDatas.size() - 20; i < msgDatas.size(); i++) {
-                tempDatas.add(msgDatas.get(i));
+            if (msgDatas!=null){
+                if (msgDatas.size()>20){
+                    for (int i = msgDatas.size() - 20; i < msgDatas.size(); i++) {
+                        tempDatas.add(msgDatas.get(i));
+                    }
+                }else{
+                    tempDatas=msgDatas;
+                }
             }
             if (addDatasType == 1) {
                 contentlist.addAll(0, tempDatas);
                 mAdapter.notifyItemRangeInserted(0, tempDatas.size());
             }
+            
             if (addDatasType == 2) {
                 int position = contentlist.size() - 1;
                 contentlist.addAll(tempDatas);
                 mAdapter.notifyItemRangeInserted(position, tempDatas.size());
             }
-            if (contentlist==null){
-                System.out.println(contentlist==null);
-            }
-            System.out.println(contentlist.size());
+            
+            //如何将这个值传递到onLoad()?????????????????;
+            ResultState resultState = CheckData(contentlist);
+            System.out.println(resultState);
+            
             mSwipeRefreshLayout.setRefreshing(false);
             super.handleMessage(msg);
         }
     };
-
     public CommNewsFragment(String channelName) {
         this.channelName = channelName;
     }
-
     @Override
     protected ResultState onLoad() {
         return ResultState.STATE_SUCCESS;
     }
-
     @Override
     protected View onCreateSuccessView() {
         View view = UiUtils.inflate(R.layout.fragment_commnews);
         ButterKnife.bind(this, view);
-        layoutManager = new LinearLayoutManager(UiUtils.getContext());
-        mRecyclerView.setLayoutManager(layoutManager);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.blueStatus);
-        mSwipeRefreshLayout.setRefreshing(true);
-        getDataFromNet(ApiConstants.getHttpUrlByChannelName(channelName, mCurrentPage, mCurrentMaxResult));
+        //初始化控件以及初始加載的數據
+        initUI();
+        //处理事务
+        initEvents();
+        return view;
+    }
+
+    private void initEvents() {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                addDatasType = 1;
-                RefreshDatas();
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        addDatasType = 1;
+                        RefreshDatas();  
+                    }
+                },500);
             }
         });
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -103,7 +114,6 @@ public class CommNewsFragment extends BaseFragment {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
             }
-
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -114,6 +124,7 @@ public class CommNewsFragment extends BaseFragment {
                         mAdapter.notifyItemRemoved(mAdapter.getItemCount());
                         return;
                     }
+                    
                     if (!isLoading) {
                         isLoading = true;
                         addDatasType = 2;
@@ -129,9 +140,19 @@ public class CommNewsFragment extends BaseFragment {
                 }
             }
         });
-        return view;
     }
 
+    private void initUI() {
+        layoutManager = new LinearLayoutManager(UiUtils.getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.blueStatus);
+        mSwipeRefreshLayout.setRefreshing(true);
+        getDataFromNet(ApiConstants.getHttpUrlByChannelName(channelName, mCurrentPage, mCurrentMaxResult));
+    }
+
+    /**
+     * 刷新数据
+     */
     private void RefreshDatas() {
         mCurrentMaxResult += 20;
         mCurrentPage += 1;
@@ -142,24 +163,21 @@ public class CommNewsFragment extends BaseFragment {
         getDataFromNet(url);
     }
 
+    /**
+     * 从网络获取数据
+     * @param url
+     */
     private void getDataFromNet(final String url) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String result = HttpUtils.doPost(url, null);
-                if (result != null) {
-                    NewsInfo newsInfo = JSON.parseObject(result, NewsInfo.class);
-
-                    if (newsInfo != null) {
-                        List<ContentlistEntity> mdatas = newsInfo.getShowapi_res_body().getPagebean().getContentlist();
-                        Message message = new Message();
-                        message.obj = mdatas;
-                        mHandler.sendMessage(message);
-                    }
-
-                }
+                NewsProtocol protocol=new NewsProtocol();
+                List<ContentlistEntity> mdatas = protocol.getData(url);
+                Message message = new Message();
+                message.obj = mdatas;
+                mHandler.sendMessage(message);
             }
         }).start();
     }
-
+    
 }

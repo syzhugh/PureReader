@@ -1,5 +1,6 @@
 package com.zdfy.purereader.utils.protocol;
 
+import com.zdfy.purereader.constant.ApiConstants;
 import com.zdfy.purereader.utils.HttpUtils;
 import com.zdfy.purereader.utils.IOUtils;
 import com.zdfy.purereader.utils.StringUtils;
@@ -18,7 +19,9 @@ import java.io.IOException;
 public abstract class BaseProtocol<T> {
     public T getData(String UrlForName) {
         String result = getCache(UrlForName);
+        System.out.println(result);
         if (StringUtils.isEmpty(result)) {
+            System.out.println("getFromNet...");
             result = getDataFromNet(UrlForName);
         }
         if (result != null) {
@@ -44,19 +47,22 @@ public abstract class BaseProtocol<T> {
     protected String getDataFromNet(String urlForName) {
         String result = HttpUtils.doPost(urlForName, null);
         if (!StringUtils.isEmpty(result)) {
+            System.out.println("BaseProtocol" + urlForName);
             setCache(urlForName, result);
             return result;
         }
         return null;
     }
-        /**
-         * 设置缓存
-         *
-         * @param UrlForName 地址名为key值
-         * @param json       json串为value
-         */
 
+    /**
+     * 设置缓存
+     *
+     * @param UrlForName 地址名为key值
+     * @param json       json串为value
+     */
     public void setCache(String UrlForName, String json) {
+        UrlForName = ApiConstants.ModifyCacheUrl(UrlForName);
+        System.out.println(UrlForName);
         File cacheDir = UiUtils.getContext().getCacheDir();
         File cacheFile = new File(cacheDir, UrlForName);
         FileWriter fw = null;
@@ -73,7 +79,6 @@ public abstract class BaseProtocol<T> {
             IOUtils.close(fw);
         }
     }
-
     /**
      * 读取缓存
      *
@@ -81,9 +86,11 @@ public abstract class BaseProtocol<T> {
      * @return
      */
     public String getCache(String UrlForName) {
+        UrlForName = ApiConstants.ModifyCacheUrl(UrlForName);
         File cacheDir = UiUtils.getContext().getCacheDir();
         File cacheFile = new File(cacheDir, UrlForName);
         if (cacheFile.exists()) {
+            System.out.println("cacheFile.exists......");
             BufferedReader br = null;
             try {
                 br = new BufferedReader(new FileReader(cacheFile));
