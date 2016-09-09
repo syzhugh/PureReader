@@ -10,10 +10,16 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.animation.PropertyValuesHolder;
+import com.nineoldandroids.animation.ValueAnimator;
+import com.nineoldandroids.view.ViewHelper;
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.ui.qrcode.camera.CameraManager;
 import com.zdfy.purereader.ui.qrcode.decode.DecodeUtils;
@@ -26,6 +32,7 @@ import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by Yaozong on 2016/9/8.
@@ -39,8 +46,8 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
 
     @Bind(R.id.cap_surface)
     SurfaceView capSurface;
-    @Bind(R.id.cap_cropview_cropbar)
-    ImageView capCropviewCropbar;
+    @Bind(R.id.cap_scan)
+    ImageView capScanbar;
     @Bind(R.id.cap_cropview)
     RelativeLayout capCropview;
     @Bind(R.id.cap_bt_fromfiles)
@@ -85,7 +92,6 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         container = (RelativeLayout) getLayoutInflater().inflate(R.layout.activity_qrcodecapture, null);
         setContentView(container);
-
         ButterKnife.bind(this);
 
         init();
@@ -94,58 +100,25 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     private void init() {
         hasSurface = false;
         isLightOn = false;
+
         mQrcodeCropWidth = getResources().getDimensionPixelSize(R.dimen.qrcode_width);
         mQrcodeCropHeight = getResources().getDimensionPixelSize(R.dimen.qrcode_height);
-
         mBarcodeCropWidth = getResources().getDimensionPixelSize(R.dimen.barcode_width);
         mBarcodeCropHeight = getResources().getDimensionPixelSize(R.dimen.barcode_height);
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        cameraManager = new CameraManager(this);
+        cameraManager = new CameraManager(getApplication());
+
         capActHandler = null;
 
         if (hasSurface) {
-            // The activity was paused but not stopped, so the surface still exists. Therefore
-            // surfaceCreated() won't be called, so init the camera here.
             initCamera(capSurface.getHolder());
         } else {
-            // Install the callback and wait for surfaceCreated() to init the camera.
             capSurface.getHolder().addCallback(this);
         }
-
-        timer.onResume();
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (capActHandler != null) {
-            capActHandler.quitSynchronously();
-            capActHandler = null;
-        }
-
-        beepManager.close();
-        timer.onPause();
-        cameraManager.closeDriver();
-
-        if (!hasSurface) {
-            capSurface.getHolder().removeCallback(this);
-        }
-
-        if (null != mScanMaskObjectAnimator && mScanMaskObjectAnimator.isStarted()) {
-            mScanMaskObjectAnimator.cancel();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        timer.shutdown();
     }
 
     /*-------------核心部分--------------*/
@@ -176,7 +149,7 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
 
     private void initCamera(SurfaceHolder holder) {
         if (holder == null) {
-            Log.i(TAG, "initCamera: SurfaceHolder" + (holder == null));
+            return;
         }
         if (cameraManager.isOpen()) {
             return;
@@ -184,50 +157,66 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         try {
             cameraManager.openDriver(holder);
             // Creating the handler starts the preview, which can also throw a RuntimeException.
-            if (capActHandler == null) {
+            if (holder == null) {
                 capActHandler = new CaptureActivityHandler(this, cameraManager);
             }
-            onCameraPreviewSuccess();
+
+            cameraSuccess();
         } catch (IOException ioe) {
-
+            cameraFailed();
         } catch (RuntimeException e) {
-
+            cameraFailed();
         }
     }
 
-    private void onCameraPreviewSuccess() {
+
+    private void cameraSuccess() {
         initCrop();
-        capShadeError.setVisibility(View.GONE);
+        ViewHelper.setPivotX(capScanbar, 0f);
+        ViewHelper.setPivotY(capScanbar, 0f);
+        mScanMaskObjectAnimator = ObjectAnimator.ofFloat(capScanbar, "scaleY", 0.0f, 1.0f);
+        mScanMaskObjectAnimator.setDuration(2000);
+        mScanMaskObjectAnimator.setInterpolator(new DecelerateInterpolator());
+        mScanMaskObjectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+        mScanMaskObjectAnimator.setRepeatMode(ObjectAnimator.RESTART);
+        mScanMaskObjectAnimator.start();
+
     }
 
-    private void onCameraPreviewFailed() {
+    private void cameraFailed() {
         capShadeError.setVisibility(View.VISIBLE);
+        Toast.makeText(MCaptureActivity.this, "开启失败", Toast.LENGTH_SHORT).show();
     }
+
 
     public void handleDecode(String result, Bundle bundle) {
-        timer.onActivity();
-        beepManager.playBeepSoundAndVibrate();
-
-        if (!CommonUtils.isEmpty(result) && CommonUtils.isUrl(result)) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(result));
-            startActivity(intent);
-        } else {
-            Intent intent = new Intent(this, MResultActivity.class);
-            bundle.putString("result", result);
-            intent.putExtra("result", bundle);
-            startActivity(intent);
-        }
+//        timer.onActivity();
+//        beepManager.playBeepSoundAndVibrate();
+//
+//        if (!CommonUtils.isEmpty(result) && CommonUtils.isUrl(result)) {
+//            Intent intent = new Intent(Intent.ACTION_VIEW);
+//            intent.setData(Uri.parse(result));
+//            startActivity(intent);
+//        } else {
+//            Intent intent = new Intent(this, MResultActivity.class);
+//            bundle.putString("result", result);
+//            intent.putExtra("result", bundle);
+//            startActivity(intent);
+//        }
     }
 
     /*-------------surface接口--------------*/
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        Log.i("info", "surfaceCreated-----------------------------");
         if (holder == null) {
-            Log.i(TAG, "surfaceCreated: SurfaceHolder" + (holder == null));
+            return;
         }
-        if (!hasSurface)
+        if (!hasSurface){
             hasSurface = true;
+            initCamera(holder);
+        }
+
     }
 
     @Override
@@ -241,31 +230,120 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /*-----------模式选择----------------*/
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            /*来自本地  闪光灯*/
+
+    @OnClick({R.id.cap_bt_fromfiles, R.id.cap_bt_light, R.id.cap_bt_qrcode, R.id.cap_bt_barcode})
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.cap_bt_fromfiles:
+                Log.i("info", "cap_bt_fromfiles");
                 startActFromFiles();
                 break;
             case R.id.cap_bt_light:
+                Log.i("info", "cap_bt_light");
                 changeLightState();
                 break;
-
-            /*二维码 条形码*/
             case R.id.cap_bt_qrcode:
+                Log.i("info", "cap_bt_qrcode");
                 changeToQRCode();
                 break;
             case R.id.cap_bt_barcode:
+                Log.i("info", "cap_bt_barcode");
                 changeToBarCode();
                 break;
         }
     }
 
+    /*框图变化*/
+    private int currentMode = 0;
+
     private void changeToBarCode() {
+        if (currentMode == 1)
+            return;
+        PropertyValuesHolder qr2barWidthVH = PropertyValuesHolder.ofFloat("width",
+                1.0f, (float) mBarcodeCropWidth / mQrcodeCropWidth);
+        PropertyValuesHolder qr2barHeightVH = PropertyValuesHolder.ofFloat("height",
+                1.0f, (float) mBarcodeCropHeight / mQrcodeCropHeight);
+        ValueAnimator valueAnimator = ValueAnimator.ofPropertyValuesHolder(qr2barWidthVH, qr2barHeightVH);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Float fractionW = (Float) animation.getAnimatedValue("width");
+                Float fractionH = (Float) animation.getAnimatedValue("height");
+
+                RelativeLayout.LayoutParams parentLayoutParams = (RelativeLayout.LayoutParams) capCropview.getLayoutParams();
+                parentLayoutParams.width = (int) (mQrcodeCropWidth * fractionW);
+                parentLayoutParams.height = (int) (mQrcodeCropHeight * fractionH);
+                capCropview.setLayoutParams(parentLayoutParams);
+            }
+        });
+        valueAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                Log.i("info", "onAnimationStart-----------------------------");
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                Log.i("info", "onAnimationEnd-----------------------------");
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                Log.i("info", "onAnimationCancel-----------------------------");
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                Log.i("info", "onAnimationRepeat-----------------------------");
+            }
+        });
+        valueAnimator.start();
+        currentMode = 1;
     }
 
     private void changeToQRCode() {
+        if (currentMode == 0)
+            return;
+        PropertyValuesHolder bar2qrWidthVH = PropertyValuesHolder.ofFloat("width",
+                1.0f, (float) mQrcodeCropWidth / mBarcodeCropWidth);
+        PropertyValuesHolder bar2qrHeightVH = PropertyValuesHolder.ofFloat("height",
+                1.0f, (float) mQrcodeCropHeight / mBarcodeCropHeight);
+        ValueAnimator valueAnimator = ValueAnimator.ofPropertyValuesHolder(bar2qrWidthVH, bar2qrHeightVH);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Float fractionW = (Float) animation.getAnimatedValue("width");
+                Float fractionH = (Float) animation.getAnimatedValue("height");
+
+                RelativeLayout.LayoutParams parentLayoutParams = (RelativeLayout.LayoutParams) capCropview.getLayoutParams();
+                parentLayoutParams.width = (int) (mBarcodeCropWidth * fractionW);
+                parentLayoutParams.height = (int) (mBarcodeCropHeight * fractionH);
+                capCropview.setLayoutParams(parentLayoutParams);
+            }
+        });
+        valueAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                Log.i("info", "onAnimationStart-----------------------------");
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                Log.i("info", "onAnimationEnd-----------------------------");
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                Log.i("info", "onAnimationCancel-----------------------------");
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                Log.i("info", "onAnimationRepeat-----------------------------");
+            }
+        });
+        valueAnimator.start();
+        currentMode = 0;
     }
 
     private void changeLightState() {
@@ -287,7 +365,6 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     public void setCropRect(Rect rect) {
         this.cropRect = rect;
     }
-
 
     public int getDataMode() {
         return 0;

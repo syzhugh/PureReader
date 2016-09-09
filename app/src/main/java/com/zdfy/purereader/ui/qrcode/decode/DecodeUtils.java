@@ -53,9 +53,9 @@ public class DecodeUtils {
     private int mDataMode;
 //    private ImageScanner mImageScanner;
 
-    static {
-        System.loadLibrary("iconv");
-    }
+//    static {
+//        System.loadLibrary("iconv");
+//    }
 
     public DecodeUtils(int dataMode) {
 //        mImageScanner = new ImageScanner();
