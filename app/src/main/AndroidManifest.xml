@@ -9,6 +9,7 @@
     <!--qrcode-->
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -26,6 +27,8 @@
 
         </activity>
 
+
+        <!--qrcode-->
         <activity
             android:name=".ui.qrcode.activity.MCaptureActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -35,6 +38,12 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".ui.qrcode.activity.MResultActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
     </application>

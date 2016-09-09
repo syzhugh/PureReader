@@ -5,6 +5,9 @@ import android.os.Bundle;
 
 public class MResultActivity extends AppCompatActivity {
 
+    public static final String SCAN_RESULT = "result";
+    public static final String SCAN_BUNDLE = "bundle";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zdfy.purereader.utils;
+package com.zdfy.purereader.ui.qrcode.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
