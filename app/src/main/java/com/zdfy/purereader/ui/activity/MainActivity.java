@@ -1,4 +1,5 @@
 package com.zdfy.purereader.ui.activity;
+
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -15,6 +16,7 @@ import com.zdfy.purereader.R;
 import com.zdfy.purereader.ui.fragment.NewsFragment;
 import com.zdfy.purereader.ui.fragment.PicFragment;
 import com.zdfy.purereader.ui.fragment.VideoFragment;
+import com.zdfy.purereader.ui.fragment.ZhiHuFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NewsFragment mNewsFragment;
     private PicFragment mPicFragment;
     private VideoFragment mVideoFragment;
-
+    private ZhiHuFragment mZhiHuFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,14 +95,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         hideFragments(fragmentTransaction);
-        if (id == R.id.nav_news) {
+        if (id == R.id.nav_zhihu) {
+            if (mZhiHuFragment == null) {
+                mZhiHuFragment = new ZhiHuFragment();
+                fragmentTransaction.add(R.id.fl_container, mZhiHuFragment);
+            }
+            fragmentTransaction.show(mZhiHuFragment);
+        } else if (id == R.id.nav_news) {
             if (mNewsFragment == null) {
                 mNewsFragment = new NewsFragment();
                 fragmentTransaction.add(R.id.fl_container, mNewsFragment);
             }
             fragmentTransaction.show(mNewsFragment);
-
-
         } else if (id == R.id.nav_pic) {
             if (mPicFragment == null) {
                 mPicFragment = new PicFragment();
@@ -115,14 +121,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             fragmentTransaction.show(mVideoFragment);
 
-        }else if (id==R.id.nav_about){
-            
+        } else if (id == R.id.nav_about) {
+
         }
         fragmentTransaction.commit();
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
-
     private void hideFragments(FragmentTransaction transaction) {
         if (mNewsFragment != null) {
             transaction.hide(mNewsFragment);
@@ -132,6 +137,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if (mVideoFragment != null) {
             transaction.hide(mVideoFragment);
+        }
+        if (mZhiHuFragment!=null){
+            transaction.hide(mZhiHuFragment);
         }
     }
 }

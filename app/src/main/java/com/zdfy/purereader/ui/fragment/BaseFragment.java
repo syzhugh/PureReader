@@ -41,7 +41,6 @@ public abstract class BaseFragment extends Fragment {
      * @return
      */
     protected abstract LoadingPage.ResultState onLoad();
-
     /**
      * 加载成功的布局
      *

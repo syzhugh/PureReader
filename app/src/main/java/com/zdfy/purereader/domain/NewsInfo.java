@@ -1,5 +1,6 @@
 package com.zdfy.purereader.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ public class NewsInfo {
         this.showapi_res_body = showapi_res_body;
     }
 
-    public static class ShowapiResBodyEntity {
+    public static class ShowapiResBodyEntity implements Serializable{
         private int ret_code;
         /**
          * allPages : 76
@@ -74,7 +75,7 @@ public class NewsInfo {
             this.pagebean = pagebean;
         }
 
-        public static class PagebeanEntity {
+        public static class PagebeanEntity implements Serializable{
             private int allPages;
             private int currentPage;
             private int allNum;
@@ -132,7 +133,7 @@ public class NewsInfo {
                 this.contentlist = contentlist;
             }
 
-            public static class ContentlistEntity {
+            public static class ContentlistEntity implements Serializable{
                 private String pubDate;
                 private String title;
                 private String channelName;
@@ -212,7 +213,7 @@ public class NewsInfo {
                     this.imageurls = imageurls;
                 }
 
-                public static class ImageurlsEntity {
+                public static class ImageurlsEntity implements Serializable{
                     private int height;
                     private int width;
                     private String url;

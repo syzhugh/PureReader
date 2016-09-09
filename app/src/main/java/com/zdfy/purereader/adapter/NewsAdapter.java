@@ -28,6 +28,15 @@ public class NewsAdapter extends RecyclerView.Adapter {
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
     private List<ContentlistEntity> datas;
+    public interface OnItemClickListener{
+        void onItemClick(View view,int position);
+        void onItemLongClick(View view,int position);
+    }
+    OnItemClickListener mOnItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
 
     public NewsAdapter(List<ContentlistEntity> datas) {
         this.datas = datas;
@@ -47,7 +56,7 @@ public class NewsAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ItemViewHolder) {
           
             if (datas.get(position).getImageurls() != null) {
@@ -59,7 +68,22 @@ public class NewsAdapter extends RecyclerView.Adapter {
             }
                 ((ItemViewHolder) holder).mTvPubDate.setText(datas.get(position).getPubDate());
                 ((ItemViewHolder) holder).mTvTitle.setText(datas.get(position).getTitle());
-            }
+               if (mOnItemClickListener!=null){
+                   holder.itemView.setOnClickListener(new View.OnClickListener() {
+                       @Override
+                       public void onClick(View view) {
+                           mOnItemClickListener.onItemClick(holder.itemView,holder.getLayoutPosition());
+                       }
+                   });
+                   holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                       @Override
+                       public boolean onLongClick(View view) {
+                           mOnItemClickListener.onItemLongClick(holder.itemView,holder.getLayoutPosition());
+                           return false;
+                       }
+                   });
+               }   
+        }
         }
         @Override
         public int getItemCount () {

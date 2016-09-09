@@ -6,6 +6,7 @@
     android:id="@+id/rl_item"
     android:layout_height="wrap_content">
     <TextView
+        android:text="N/A"
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,6 +17,7 @@
         android:textSize="@dimen/text_normal_sp"/>
 
     <TextView
+        android:text="N/A"
         android:textColor="@color/colorAccent"
         android:id="@+id/tv_pubDate"
         android:layout_width="wrap_content"
@@ -23,9 +25,9 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/tv_title"
         android:layout_marginLeft="10dp"
-        android:text="2016-09-07 13:29:05"
         android:textSize="14sp"/>
     <ImageView
+        android:src="@drawable/no_img"
         android:layout_below="@+id/tv_title"
         android:id="@+id/iv_news"
         android:layout_width="70dp"
@@ -33,5 +35,5 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="5dp"
         android:layout_marginTop="2dp"
-        android:src="@drawable/empty"/>
+        />
 </RelativeLayout>
