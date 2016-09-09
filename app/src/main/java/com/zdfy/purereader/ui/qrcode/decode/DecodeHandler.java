@@ -25,6 +25,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 
+
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.zdfy.purereader.ui.qrcode.activity.MCaptureActivity;
 import com.zdfy.purereader.ui.qrcode.utils.Constants;
@@ -32,7 +33,6 @@ import com.zdfy.purereader.ui.qrcode.utils.Constants;
 import java.io.ByteArrayOutputStream;
 
 public final class DecodeHandler extends Handler {
-
 
     private static final String TAG = DecodeHandler.class.getSimpleName();
 
@@ -85,14 +85,25 @@ public final class DecodeHandler extends Handler {
         size.height = tmp;
 
         String resultStr = null;
+
         Rect cropRect = activity.getCropRect();
         if (null == cropRect) {
             activity.initCrop();
         }
         cropRect = activity.getCropRect();
 
+
         mDecodeUtils.setDataMode(activity.getDataMode());
+
+//        String zbarStr = mDecodeUtils.decodeWithZbar(rotatedData, size.width, size.height, cropRect);
+
+
         String zxingStr = mDecodeUtils.decodeWithZxing(rotatedData, size.width, size.height, cropRect);
+
+//        if (!TextUtils.isEmpty(zbarStr)) {
+//            mDecodeMode = DecodeUtils.DECODE_MODE_ZBAR;
+//            resultStr = zbarStr;
+//        } else
 
         if (!TextUtils.isEmpty(zxingStr)) {
             mDecodeMode = DecodeUtils.DECODE_MODE_ZXING;

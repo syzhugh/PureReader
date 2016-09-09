@@ -19,6 +19,7 @@ package com.zdfy.purereader.ui.qrcode.decode;
 import android.os.Handler;
 import android.os.Looper;
 
+
 import com.zdfy.purereader.ui.qrcode.activity.MCaptureActivity;
 
 import java.util.concurrent.CountDownLatch;
@@ -29,7 +30,6 @@ import java.util.concurrent.CountDownLatch;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public class DecodeThread extends Thread {
-
 
     public static final String BARCODE_BITMAP = "BARCODE_BITMAP";
     public static final String DECODE_MODE = "DECODE_MODE";

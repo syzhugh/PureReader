@@ -33,7 +33,6 @@ import android.util.Log;
  */
 public class InactivityTimer {
 
-
 	private static final String TAG = InactivityTimer.class.getSimpleName();
 
 	private static final long INACTIVITY_DELAY_MS = 5 * 60 * 1000L;

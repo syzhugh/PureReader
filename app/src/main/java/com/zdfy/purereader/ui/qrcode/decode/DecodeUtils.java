@@ -42,7 +42,6 @@ import java.util.Map;
  */
 public class DecodeUtils {
 
-
     public static final int DECODE_MODE_ZBAR = 10001;
     public static final int DECODE_MODE_ZXING = 10002;
 

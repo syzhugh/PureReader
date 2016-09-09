@@ -1,8 +1,6 @@
 package com.zdfy.purereader.ui.qrcode.activity;
 
-import android.content.Intent;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -26,12 +24,11 @@ import com.zdfy.purereader.ui.qrcode.decode.DecodeUtils;
 import com.zdfy.purereader.ui.qrcode.utils.BeepManager;
 import com.zdfy.purereader.ui.qrcode.utils.CaptureActivityHandler;
 import com.zdfy.purereader.ui.qrcode.utils.InactivityTimer;
-import com.zdfy.purereader.utils.CommonUtils;
 
 import java.io.IOException;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.Bind;
 import butterknife.OnClick;
 
 /**
@@ -46,10 +43,14 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
 
     @Bind(R.id.cap_surface)
     SurfaceView capSurface;
+
+    @Bind(R.id.cap_shade_error)
+    ImageView capShadeError;
     @Bind(R.id.cap_scan)
     ImageView capScanbar;
     @Bind(R.id.cap_cropview)
     RelativeLayout capCropview;
+
     @Bind(R.id.cap_bt_fromfiles)
     ImageView capBtFromfiles;
     @Bind(R.id.cap_bt_light)
@@ -58,8 +59,6 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     ImageView capBtQrcode;
     @Bind(R.id.cap_bt_barcode)
     ImageView capBtBarcode;
-    @Bind(R.id.cap_shade_error)
-    ImageView capShadeError;
 
     /*核心*/
     private CaptureActivityHandler capActHandler;
@@ -109,20 +108,27 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     protected void onResume() {
+        Log.i("info", "onResume-----------------------------");
         super.onResume();
+
         cameraManager = new CameraManager(getApplication());
 
         capActHandler = null;
 
         if (hasSurface) {
+            // The activity was paused but not stopped, so the surface still exists. Therefore
+            // surfaceCreated() won't be called, so init the camera here.
             initCamera(capSurface.getHolder());
         } else {
+            // Install the callback and wait for surfaceCreated() to init the camera.
             capSurface.getHolder().addCallback(this);
         }
+
     }
 
     /*-------------核心部分--------------*/
     public void initCrop() {
+        Log.i("info", "initCrop-----------------------------");
         int cameraWidth = cameraManager.getCameraResolution().y;
         int cameraHeight = cameraManager.getCameraResolution().x;
 
@@ -145,11 +151,13 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         int height = cropHeight * cameraHeight / containerHeight;
 
         setCropRect(new Rect(x, y, width + x, height + y));
+
     }
 
     private void initCamera(SurfaceHolder holder) {
+        Log.i("info", "initCamera-----------------------------");
         if (holder == null) {
-            return;
+            throw new IllegalStateException("No SurfaceHolder provided");
         }
         if (cameraManager.isOpen()) {
             return;
@@ -157,7 +165,7 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         try {
             cameraManager.openDriver(holder);
             // Creating the handler starts the preview, which can also throw a RuntimeException.
-            if (holder == null) {
+            if (capActHandler == null) {
                 capActHandler = new CaptureActivityHandler(this, cameraManager);
             }
 
@@ -167,10 +175,13 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         } catch (RuntimeException e) {
             cameraFailed();
         }
+
     }
 
 
+    /*------------响应操作---------------*/
     private void cameraSuccess() {
+        Log.i("info", "cameraSuccess-----------------------------");
         initCrop();
         ViewHelper.setPivotX(capScanbar, 0f);
         ViewHelper.setPivotY(capScanbar, 0f);
@@ -184,25 +195,14 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void cameraFailed() {
-        capShadeError.setVisibility(View.VISIBLE);
+        Log.i("info", "cameraFailed-----------------------------");
         Toast.makeText(MCaptureActivity.this, "开启失败", Toast.LENGTH_SHORT).show();
     }
 
 
     public void handleDecode(String result, Bundle bundle) {
-//        timer.onActivity();
-//        beepManager.playBeepSoundAndVibrate();
-//
-//        if (!CommonUtils.isEmpty(result) && CommonUtils.isUrl(result)) {
-//            Intent intent = new Intent(Intent.ACTION_VIEW);
-//            intent.setData(Uri.parse(result));
-//            startActivity(intent);
-//        } else {
-//            Intent intent = new Intent(this, MResultActivity.class);
-//            bundle.putString("result", result);
-//            intent.putExtra("result", bundle);
-//            startActivity(intent);
-//        }
+        Log.i("info", "handleDecode-----------------------------");
+        Log.i("info", "" + result);
     }
 
     /*-------------surface接口--------------*/
@@ -210,22 +210,23 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     public void surfaceCreated(SurfaceHolder holder) {
         Log.i("info", "surfaceCreated-----------------------------");
         if (holder == null) {
-            return;
+
         }
-        if (!hasSurface){
+        if (!hasSurface) {
             hasSurface = true;
             initCamera(holder);
         }
-
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        Log.i("info", "surfaceChanged-----------------------------");
         initCamera(holder);
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.i("info", "surfaceDestroyed-----------------------------");
         hasSurface = false;
     }
 
@@ -279,22 +280,20 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         valueAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                Log.i("info", "onAnimationStart-----------------------------");
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                Log.i("info", "onAnimationEnd-----------------------------");
+                initCrop();
+                setDataMode(DecodeUtils.DECODE_DATA_MODE_BARCODE);
             }
 
             @Override
             public void onAnimationCancel(Animator animation) {
-                Log.i("info", "onAnimationCancel-----------------------------");
             }
 
             @Override
             public void onAnimationRepeat(Animator animation) {
-                Log.i("info", "onAnimationRepeat-----------------------------");
             }
         });
         valueAnimator.start();
@@ -324,27 +323,26 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         valueAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                Log.i("info", "onAnimationStart-----------------------------");
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                Log.i("info", "onAnimationEnd-----------------------------");
+                initCrop();
+                setDataMode(DecodeUtils.DECODE_DATA_MODE_QRCODE);
             }
 
             @Override
             public void onAnimationCancel(Animator animation) {
-                Log.i("info", "onAnimationCancel-----------------------------");
             }
 
             @Override
             public void onAnimationRepeat(Animator animation) {
-                Log.i("info", "onAnimationRepeat-----------------------------");
             }
         });
         valueAnimator.start();
         currentMode = 0;
     }
+
 
     private void changeLightState() {
     }
@@ -354,9 +352,7 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /*-------------getter&setter--------------*/
-    public CameraManager getCameraManager() {
-        return cameraManager;
-    }
+
 
     public Rect getCropRect() {
         return cropRect;
@@ -367,11 +363,19 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public int getDataMode() {
-        return 0;
+        return dataMode;
+    }
+
+    private void setDataMode(int dataMode) {
+        this.dataMode = dataMode;
+    }
+
+    public CameraManager getCameraManager() {
+        return cameraManager;
     }
 
     public Handler getHandler() {
-        return null;
+        return capActHandler;
     }
 
 
