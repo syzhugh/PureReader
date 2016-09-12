@@ -20,6 +20,7 @@ import static com.zdfy.purereader.constant.Constant.STATE_LOAD_UNDO;
  */
 
 public abstract class LoadingPage extends FrameLayout {
+    
     private int mCurrentState = STATE_LOAD_UNDO;// 当前状态
     private View mLoadingPage;
     private View mErrorPage;

@@ -1,27 +1,47 @@
 package com.zdfy.purereader.ui.fragment;
 
-import android.graphics.Color;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
+import android.os.Message;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.zdfy.purereader.utils.UiUtils;
-
+import com.zdfy.purereader.constant.GankApis;
+import com.zdfy.purereader.http.protocol.GankImgProtocol;
+import com.zdfy.purereader.ui.view.LoadingPage;
 /**
  * Created by ZhangPeng on 2016/9/6.
  */
-
-public class PicFragment extends Fragment {
-    @Nullable
+public class PicFragment extends BaseFragment {
+    private int page=1;
+    private GankImgProtocol mImgProtocol;
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        TextView tv=new TextView(UiUtils.getContext());
-        tv.setText("PicFragment");
-        tv.setTextColor(Color.BLACK);
-        return tv;  }
+    protected void handleMsgByChild(Message msg) {
+        
+    }
 
+    @Override
+    protected void initImplViews() {
+
+    }
+
+    @Override
+    protected LoadingPage.ResultState onLoad() {
+        if (mImgProtocol==null){
+            mImgProtocol=new GankImgProtocol();
+        }
+        return CheckData(mImgProtocol.getData(GankApis.getBaseFuLiImages_Url(page),2));
+    }
+
+    @Override
+    protected View onCreateSuccessView() {
+        return null;
+    }
+
+    @Override
+    protected void LoadMoreDatas() {
+
+    }
+
+    @Override
+    protected void RefreshDatas() {
+
+    }
 }

@@ -1,4 +1,4 @@
-package com.zdfy.purereader.utils.protocol;
+package com.zdfy.purereader.http.protocol;
 
 import com.zdfy.purereader.constant.ApiConstants;
 import com.zdfy.purereader.utils.HttpUtils;
@@ -17,12 +17,12 @@ import java.io.IOException;
  * Created by ZhangPeng on 2016/9/7.
  */
 public abstract class BaseProtocol<T> {
-    public T getData(String UrlForName) {
+    public T getData(String UrlForName,int getOrPostCode) {
         String result = getCache(UrlForName);
-        System.out.println(result);
+//        System.out.println(result);
         if (StringUtils.isEmpty(result)) {
             System.out.println("getFromNet...");
-            result = getDataFromNet(UrlForName);
+            result = getDataFromNet(UrlForName,getOrPostCode);
         }
         if (result != null) {
             return parseData(result);
@@ -40,16 +40,26 @@ public abstract class BaseProtocol<T> {
 
     /**
      * 从网络获取数据,由子类实现
-     *
      * @param urlForName
+     * @param getOrPostCode 区分是get(用2 )  post(用1)
      * @return
      */
-    protected String getDataFromNet(String urlForName) {
-        String result = HttpUtils.doPost(urlForName, null);
-        if (!StringUtils.isEmpty(result)) {
-            System.out.println("BaseProtocol" + urlForName);
-            setCache(urlForName, result);
-            return result;
+    protected String getDataFromNet(String urlForName,int getOrPostCode) {
+        if (getOrPostCode==1) {
+            String result = HttpUtils.doPost(urlForName, null);
+            if (!StringUtils.isEmpty(result)) {
+                System.out.println("BaseProtocol" + urlForName);
+                setCache(urlForName, result);
+                return result;
+            }
+        }
+        if (getOrPostCode==2) {
+            String result = HttpUtils.doGet(urlForName);
+            if (!StringUtils.isEmpty(result)) {
+                System.out.println("BaseProtocol" + urlForName);
+                setCache(urlForName, result);
+                return result;
+            }
         }
         return null;
     }

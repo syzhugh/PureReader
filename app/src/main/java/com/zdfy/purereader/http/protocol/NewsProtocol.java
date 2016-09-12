@@ -1,4 +1,4 @@
-package com.zdfy.purereader.utils.protocol;
+package com.zdfy.purereader.http.protocol;
 
 import com.alibaba.fastjson.JSON;
 import com.zdfy.purereader.domain.NewsInfo;
@@ -14,11 +14,12 @@ import java.util.List;
 public class NewsProtocol extends BaseProtocol<List<ContentlistEntity>> {
     @Override
     protected List<ContentlistEntity> parseData(String result) {
-        List<ContentlistEntity> mdatas = null;
+
         NewsInfo newsInfo = JSON.parseObject(result, NewsInfo.class);
-        if (newsInfo != null) {
-            mdatas = newsInfo.getShowapi_res_body().getPagebean().getContentlist();
+        if (newsInfo != null&&newsInfo.getShowapi_res_body()!=null&&newsInfo.getShowapi_res_body().getPagebean()!=null) {
+            List<ContentlistEntity> mdatas = newsInfo.getShowapi_res_body().getPagebean().getContentlist();
+            return mdatas;
         }
-        return mdatas;
+        return null;
     }
 }

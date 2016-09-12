@@ -1,81 +1,80 @@
 package com.zdfy.purereader.ui.activity;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.constant.Constant;
 import com.zdfy.purereader.domain.DouBanInfo;
-import com.zdfy.purereader.domain.NewsInfo.ShowapiResBodyEntity.PagebeanEntity.ContentlistEntity;
-import com.zdfy.purereader.utils.ShareUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class NewsDetailActivity extends BaseDetailActivity {
+public class DouBanDetailActivity extends BaseDetailActivity {
+
     @Bind(R.id.image_view)
     ImageView mImageView;
-    @Bind(R.id.text_view)
-    TextView mTextView;
-    
+
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.toolbar_layout)
     CollapsingToolbarLayout mToolbarLayout;
     @Bind(R.id.webView)
     WebView mWebView;
-    
+
     @Bind(R.id.fab)
     FloatingActionButton mFab;
-    private ContentlistEntity datas;
-    private DouBanInfo douBanDatas;
+    private DouBanInfo datas;
+    private ProgressDialog mProgressDialog = null;
+
+    @Override
+    protected void initDatas() {
+        datas = (DouBanInfo) getIntent().getSerializableExtra(Constant.DOUBAN_BEAN);
+    }
+    @Override
+    protected void msetContentView() {
+        setContentView(R.layout.activity_dou_ban_detail);
+        ButterKnife.bind(this);
+    }
+    
+    @Override
     protected void initEvents() {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ShareUtils.shareUrl(NewsDetailActivity.this,datas.getTitle(),datas.getLink());
+                Intent sendIntent = new Intent().setAction(Intent.ACTION_SEND).setType("text/plain");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, datas.getTitle() + " " + datas.getShareUrl() + " 分享来自~PureReader");
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, "分享到"));
             }
         });
     }
 
     @Override
     protected void loadWebViewUrl() {
-        mLoadUrl(datas.getLink());
+        mLoadUrl(datas.getShareUrl());
     }
-
-    @Override
-    protected void msetContentView() {
-        setContentView(R.layout.activity_news_detail);
-        ButterKnife.bind(this);
-    }
-    @Override
-    protected void initDatas() {
-        datas = (ContentlistEntity) getIntent().getSerializableExtra(Constant.NEWS_BEAN);
-    }
-
     @Override
     protected void ImplParents() {
-        mParentWebView=mWebView;
-        mParentToolbar=mToolbar;
-        mParentToolbarLayout=mToolbarLayout;
+        mParentWebView = mWebView;
+        mParentToolbar = mToolbar;
+        mParentToolbarLayout = mToolbarLayout;
     }
-    /**
-     * 设置数据
-     */
-
+    @Override
     protected void setData() {
-        if (datas!=null){
-            mParentToolbarLayout.setTitle(datas.getTitle());
-            if (datas.getImageurls() != null && datas.getImageurls().size() !=0) {
-                Glide.with(NewsDetailActivity.this)
-                        .load(datas.getImageurls().get(0).getUrl())
+        if (datas != null) {
+            mToolbarLayout.setTitle(datas.getTitle());
+            if (datas.getThumb() != null) {
+                Glide.with(DouBanDetailActivity.this)
+                        .load(datas.getThumb())
                         .asBitmap()
                         .override(500, 600)
                         .priority(Priority.HIGH)

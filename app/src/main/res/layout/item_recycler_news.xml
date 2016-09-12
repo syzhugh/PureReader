@@ -27,7 +27,6 @@
         android:layout_marginLeft="10dp"
         android:textSize="14sp"/>
     <ImageView
-        android:src="@drawable/no_img"
         android:layout_below="@+id/tv_title"
         android:id="@+id/iv_news"
         android:layout_width="70dp"

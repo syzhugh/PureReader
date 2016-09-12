@@ -10,13 +10,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 
+import com.alibaba.fastjson.JSON;
 import com.zdfy.purereader.R;
+import com.zdfy.purereader.domain.GankImgInfo;
+import com.zdfy.purereader.ui.fragment.DouBanFragment;
 import com.zdfy.purereader.ui.fragment.NewsFragment;
 import com.zdfy.purereader.ui.fragment.PicFragment;
 import com.zdfy.purereader.ui.fragment.VideoFragment;
 import com.zdfy.purereader.ui.fragment.ZhiHuFragment;
+
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -28,12 +36,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView mNavView;
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
-    @Bind(R.id.fl_container)
-    FrameLayout mFlContainer;
+    private ZhiHuFragment mZhiHuFragment;
+    private DouBanFragment mDouBanFragment;
     private NewsFragment mNewsFragment;
     private PicFragment mPicFragment;
     private VideoFragment mVideoFragment;
-    private ZhiHuFragment mZhiHuFragment;
+  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +49,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ButterKnife.bind(this);
         initViews();
         initData();
+        String url="http://gank.io/api/data/%E7%A6%8F%E5%88%A9/20/1";
+        RequestParams params=new RequestParams(url);
+        x.http().get(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                System.out.println(result);
+                GankImgInfo gankImgInfo = JSON.parseObject(result, GankImgInfo.class);
+                List<GankImgInfo.ResultsEntity> results = gankImgInfo.getResults();
+                System.out.println(results.size());
+                System.out.println(results.get(0).getUrl());
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
     /**
@@ -101,7 +136,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragmentTransaction.add(R.id.fl_container, mZhiHuFragment);
             }
             fragmentTransaction.show(mZhiHuFragment);
-        } else if (id == R.id.nav_news) {
+        } else if (id==R.id.nav_douban){
+            if (mDouBanFragment == null) {
+                mDouBanFragment = new DouBanFragment();
+                fragmentTransaction.add(R.id.fl_container, mDouBanFragment);
+            }
+            System.out.println("loadData----DoubanFragment"+System.currentTimeMillis());
+            mDouBanFragment.loadData();
+            fragmentTransaction.show(mDouBanFragment);
+        }else if (id == R.id.nav_news) {
             if (mNewsFragment == null) {
                 mNewsFragment = new NewsFragment();
                 fragmentTransaction.add(R.id.fl_container, mNewsFragment);
@@ -129,6 +172,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
     private void hideFragments(FragmentTransaction transaction) {
+        if (mZhiHuFragment!=null){
+            transaction.hide(mZhiHuFragment);
+        }
+        if (mDouBanFragment!=null){
+            transaction.hide(mDouBanFragment);
+        }
         if (mNewsFragment != null) {
             transaction.hide(mNewsFragment);
         }
@@ -137,9 +186,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if (mVideoFragment != null) {
             transaction.hide(mVideoFragment);
-        }
-        if (mZhiHuFragment!=null){
-            transaction.hide(mZhiHuFragment);
         }
     }
 }

@@ -101,7 +101,7 @@ public class UiUtils {
     public static View inflate(int id) {
         return View.inflate(getContext(), id, null);
     }
-
+    
     ///////////////////判断是否运行在主线程///////////////////
     public static boolean isRunOnUIThread() {
         return Process.myTid() == getMainThreadId() ? true : false;

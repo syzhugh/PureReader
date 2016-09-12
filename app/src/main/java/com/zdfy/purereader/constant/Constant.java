@@ -12,4 +12,7 @@ public class Constant {
     public static final int STATE_LOAD_SUCCESS = 5;// 加载成功
     ///////////////////Intent传递常量/////////////////////////////////////////////
     public static final String NEWS_BEAN="news_bean";
+    public static final String DOUBAN_BEAN="douban_bean";
+    ///////////////////SP部分////////////////////////////////////////////////////
+    public static final String FIRST_TO_USE="first_to_use";
 }
