@@ -1,6 +1,10 @@
 package com.zdfy.purereader.ui.qrcode.activity;
 
+
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,20 +20,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.PropertyValuesHolder;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
+
+
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.ui.qrcode.camera.CameraManager;
-import com.zdfy.purereader.ui.qrcode.decode.DecodeThread;
 import com.zdfy.purereader.ui.qrcode.decode.DecodeUtils;
 import com.zdfy.purereader.ui.qrcode.utils.BeepManager;
 import com.zdfy.purereader.ui.qrcode.utils.CaptureActivityHandler;
 import com.zdfy.purereader.ui.qrcode.utils.CommonUtils;
 import com.zdfy.purereader.ui.qrcode.utils.InactivityTimer;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import butterknife.ButterKnife;
@@ -42,7 +49,6 @@ import butterknife.OnClick;
 
 public class MCaptureActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
-    public static final String TAG = "MCaptureActivity";
 
     /*view*/
     private RelativeLayout container;
@@ -56,6 +62,9 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     ImageView capScanbar;
     @Bind(R.id.cap_cropview)
     RelativeLayout capCropview;
+    @Bind(R.id.cap_picfromfiles)
+    ImageView capfromfiles;
+
 
     @Bind(R.id.cap_bt_fromfiles)
     ImageView capBtFromfiles;
@@ -127,14 +136,37 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         capActHandler = null;
 
         if (hasSurface) {
-            // The activity was paused but not stopped, so the surface still exists. Therefore
-            // surfaceCreated() won't be called, so init the camera here.
             initCamera(capSurface.getHolder());
         } else {
-            // Install the callback and wait for surfaceCreated() to init the camera.
             capSurface.getHolder().addCallback(this);
         }
 
+    }
+
+    @Override
+    protected void onPause() {
+        if (capActHandler != null) {
+            capActHandler.quitSynchronously();
+            capActHandler = null;
+        }
+
+        beepManager.close();
+//        timer.onPause();
+        cameraManager.closeDriver();
+
+        if (!hasSurface) {
+            capSurface.getHolder().removeCallback(this);
+        }
+
+        if (null != mScanMaskObjectAnimator && mScanMaskObjectAnimator.isStarted()) {
+            mScanMaskObjectAnimator.cancel();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     /*-------------核心部分--------------*/
@@ -188,6 +220,31 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
+    public void handleDecode(String result, Bundle bundle) {
+        Log.i("info", "handleDecode-----------------------------");
+
+        beepManager.playBeepSoundAndVibrate();
+        /*
+        * String SCAN_MODE
+        * int DecodeThread.DECODE_MODE
+        * String DecodeThread.DECODE_TIME
+        * byteArray DecodeThread.BARCODE_BITMAP
+        * */
+
+        Log.i("info", "isUrl" + CommonUtils.isUrl(result));
+        if (!CommonUtils.isEmpty(result) && CommonUtils.isUrl(result)) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(result));
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(this, MResultActivity.class);
+            bundle.putString(MResultActivity.SCAN_RESULT, result);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
+        finish();
+    }
+
 
     /*------------响应操作---------------*/
     private void cameraSuccess() {
@@ -212,56 +269,6 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
-    public void handleDecode(String result, Bundle bundle) {
-        Log.i("info", "handleDecode-----------------------------");
-
-        beepManager.playBeepSoundAndVibrate();
-
-        int mode = bundle.getInt(DecodeThread.DECODE_MODE);
-        String time = bundle.getString(DecodeThread.DECODE_TIME);
-        Log.i("info", "resule  " + result
-                + "\nmode  " + mode
-                + "\ntime  " + time);
-
-
-        Log.i("info","isUrl"+CommonUtils.isUrl(result));
-        if (!CommonUtils.isEmpty(result) && CommonUtils.isUrl(result)) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(result));
-            startActivity(intent);
-        } else {
-            Intent intent = new Intent(this, MResultActivity.class);
-            intent.putExtra(MResultActivity.SCAN_RESULT, result);
-            intent.putExtra(MResultActivity.SCAN_BUNDLE, bundle);
-            startActivity(intent);
-        }
-        finish();
-    }
-
-    /*-------------surface接口--------------*/
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        Log.i("info", "surfaceCreated-----------------------------");
-        if (holder == null) {
-
-        }
-        if (!hasSurface) {
-            hasSurface = true;
-            initCamera(holder);
-        }
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.i("info", "surfaceChanged-----------------------------");
-        initCamera(holder);
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.i("info", "surfaceDestroyed-----------------------------");
-        hasSurface = false;
-    }
 
     /*-----------模式选择----------------*/
 
@@ -380,9 +387,6 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         currentMode = 1;
     }
 
-    private void startActFromFiles() {
-
-    }
 
     private void changeLightState() {
         isLightOn = !isLightOn;
@@ -390,6 +394,70 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         cameraManager.setTorch(isLightOn);
     }
 
+
+    public static final int PIC_PICKER_REQUESTCODE = 10;
+
+    private void startActFromFiles() {
+//        startActivity(new Intent(this, MSearchPicActivity.class));
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, PIC_PICKER_REQUESTCODE);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK)
+            return;
+        if (requestCode == PIC_PICKER_REQUESTCODE) {
+            Uri uri = data.getData();
+            Log.e("uri", uri.toString());
+            ContentResolver cr = this.getContentResolver();
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+                /* 将Bitmap设定到ImageView */
+                capfromfiles.setImageBitmap(bitmap);
+
+
+                String result = new DecodeUtils(DecodeUtils.DECODE_DATA_MODE_ALL)
+                        .decodeWithZxing(bitmap);
+
+                if (result != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(MResultActivity.SCAN_MODE, MResultActivity.FROMFILES);
+                    handleDecode(result, bundle);
+                }
+
+            } catch (FileNotFoundException e) {
+                Log.e("Exception", e.getMessage(), e);
+            }
+        }
+    }
+
+    /*-------------surface接口--------------*/
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        Log.i("info", "surfaceCreated-----------------------------");
+        if (holder == null) {
+
+        }
+        if (!hasSurface) {
+            hasSurface = true;
+            initCamera(holder);
+        }
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        Log.i("info", "surfaceChanged-----------------------------");
+        initCamera(holder);
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.i("info", "surfaceDestroyed-----------------------------");
+        hasSurface = false;
+    }
 
     /*-------------getter&setter--------------*/
 

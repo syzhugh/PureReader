@@ -27,9 +27,9 @@ import java.util.concurrent.CountDownLatch;
 
 public class DecodeThread extends Thread {
 
-    public static final String BARCODE_BITMAP = "BARCODE_BITMAP";
     public static final String DECODE_MODE = "DECODE_MODE";
     public static final String DECODE_TIME = "DECODE_TIME";
+    public static final String BARCODE_BITMAP = "BARCODE_BITMAP";
 
     private final MCaptureActivity activity;
     private Handler handler;
