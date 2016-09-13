@@ -40,7 +40,7 @@ public class InactivityTimer {
 
     private static final String TAG = InactivityTimer.class.getSimpleName();
 
-    private static final long INACTIVITY_DELAY_MS = 60 * 1000L;
+    private static final long INACTIVITY_DELAY_MS = 2 * 60 * 1000L;
 
 
     private Activity activity;
@@ -120,41 +120,13 @@ public class InactivityTimer {
         protected Object doInBackground(Object... objects) {
             Log.i("info", "doInBackground-----------------------------");
 
-//			for (int i=0;i<60;i++){
-//				Log.i("info","-----------------------------"+i);
-//				try {
-//					Thread.sleep(1000);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//			activity.finish();
-
-            TimerTask timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    activity.finish();
-                }
-            };
-
-            Timer timer = new Timer();
-            timer.schedule(timerTask,0,12*1000);
-
-
-      Thread       new Thread() {
-                @Override
-                public void run() {
-                    try {
-//                        Thread.sleep(INACTIVITY_DELAY_MS);
-                        Thread.sleep(12*1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    Log.i("info", "-----------------------------");
-                    activity.finish();
-                }
-            }.start();
-
+            try {
+                Thread.sleep(INACTIVITY_DELAY_MS);
+//                Thread.sleep(12 * 1000);
+                activity.finish();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             return null;
         }

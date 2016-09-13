@@ -57,6 +57,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
         <activity
             android:name=".ui.qrcode.activity.MResultActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
