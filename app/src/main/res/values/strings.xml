@@ -30,4 +30,6 @@
     <string name="go_to_set">去设置</string>
     <string name="first_to_use">第一次使用吗?,双击小按钮可以回顶部╮(╯_╰)╭</string>
     <string name="I_has_know">我明白了\\(^o^)/~</string>
+    <string name="action_share">分享</string>
+    <string name="action_save">保存</string>
 </resources>

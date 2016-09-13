@@ -6,7 +6,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.adapter.ImgAdapter;
 import com.zdfy.purereader.constant.GankApis;
