@@ -18,8 +18,8 @@ import android.view.ViewGroup;
 
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.adapter.BaseAdapter;
-import com.zdfy.purereader.ui.view.DividerItemDecoration;
 import com.zdfy.purereader.ui.view.LoadingPage;
+import com.zdfy.purereader.ui.view.SpacesItemDecoration;
 import com.zdfy.purereader.utils.NetworkStateUtils;
 import com.zdfy.purereader.utils.UiUtils;
 
@@ -45,7 +45,7 @@ public abstract class BaseFragment extends Fragment {
         }
     };
     private View successView;
-    private LinearLayoutManager mParentlayoutManager;
+    protected LinearLayoutManager mParentlayoutManager;
     protected RecyclerView mParentRecyclerView;
     protected SwipeRefreshLayout mParentSwipeRefreshLayout;
     protected BaseAdapter mAdapter;
@@ -128,9 +128,11 @@ public abstract class BaseFragment extends Fragment {
      * 初始化UI
      */
     private void initUI() {
-        mParentlayoutManager = new LinearLayoutManager(UiUtils.getContext());
-        mParentRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
-        mParentRecyclerView.setLayoutManager(mParentlayoutManager);
+        mParentlayoutManager=new LinearLayoutManager(UiUtils.getContext());
+        setLayoutManager();
+        //设置item之间的间隔
+        SpacesItemDecoration decoration=new SpacesItemDecoration(16);
+        mParentRecyclerView.addItemDecoration(decoration);
         //设置下拉刷新的按钮的颜色
         mParentSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
         //设置手指在屏幕上下拉多少距离开始刷新
@@ -141,6 +143,7 @@ public abstract class BaseFragment extends Fragment {
         mParentSwipeRefreshLayout.setSize(SwipeRefreshLayout.DEFAULT);
         RefreshDatas();
     }
+    protected abstract void setLayoutManager();
     private void initEvents() {
         mParentSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -164,11 +167,10 @@ public abstract class BaseFragment extends Fragment {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
             }
-
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int lastVisibleItemPosition = mParentlayoutManager.findLastVisibleItemPosition();
+                int lastVisibleItemPosition = getLastVisibleItemPosition();
                 if (lastVisibleItemPosition + 1 == mAdapter.getItemCount()) {
                     boolean refreshing = mParentSwipeRefreshLayout.isRefreshing();
                     if (refreshing) {
@@ -192,6 +194,10 @@ public abstract class BaseFragment extends Fragment {
                 }
             }
         });
+    }
+
+    protected int getLastVisibleItemPosition() {
+        return mParentlayoutManager.findLastVisibleItemPosition();
     }
 
     /**

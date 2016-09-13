@@ -11,20 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.alibaba.fastjson.JSON;
 import com.zdfy.purereader.R;
-import com.zdfy.purereader.domain.GankImgInfo;
 import com.zdfy.purereader.ui.fragment.DouBanFragment;
 import com.zdfy.purereader.ui.fragment.NewsFragment;
 import com.zdfy.purereader.ui.fragment.PicFragment;
 import com.zdfy.purereader.ui.fragment.VideoFragment;
 import com.zdfy.purereader.ui.fragment.ZhiHuFragment;
-
-import org.xutils.common.Callback;
-import org.xutils.http.RequestParams;
-import org.xutils.x;
-
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -49,33 +41,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ButterKnife.bind(this);
         initViews();
         initData();
-        String url="http://gank.io/api/data/%E7%A6%8F%E5%88%A9/20/1";
-        RequestParams params=new RequestParams(url);
-        x.http().get(params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                System.out.println(result);
-                GankImgInfo gankImgInfo = JSON.parseObject(result, GankImgInfo.class);
-                List<GankImgInfo.ResultsEntity> results = gankImgInfo.getResults();
-                System.out.println(results.size());
-                System.out.println(results.get(0).getUrl());
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-
-            }
-        });
     }
 
     /**

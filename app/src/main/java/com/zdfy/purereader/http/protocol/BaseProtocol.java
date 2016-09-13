@@ -19,9 +19,7 @@ import java.io.IOException;
 public abstract class BaseProtocol<T> {
     public T getData(String UrlForName,int getOrPostCode) {
         String result = getCache(UrlForName);
-//        System.out.println(result);
         if (StringUtils.isEmpty(result)) {
-            System.out.println("getFromNet...");
             result = getDataFromNet(UrlForName,getOrPostCode);
         }
         if (result != null) {
@@ -48,7 +46,6 @@ public abstract class BaseProtocol<T> {
         if (getOrPostCode==1) {
             String result = HttpUtils.doPost(urlForName, null);
             if (!StringUtils.isEmpty(result)) {
-                System.out.println("BaseProtocol" + urlForName);
                 setCache(urlForName, result);
                 return result;
             }
@@ -72,7 +69,6 @@ public abstract class BaseProtocol<T> {
      */
     public void setCache(String UrlForName, String json) {
         UrlForName = ApiConstants.ModifyCacheUrl(UrlForName);
-        System.out.println(UrlForName);
         File cacheDir = UiUtils.getContext().getCacheDir();
         File cacheFile = new File(cacheDir, UrlForName);
         FileWriter fw = null;

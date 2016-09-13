@@ -18,13 +18,13 @@ import com.zdfy.purereader.adapter.DouBanAdapter;
 import com.zdfy.purereader.constant.Constant;
 import com.zdfy.purereader.constant.ZhiHuApiConstants;
 import com.zdfy.purereader.domain.DouBanInfo;
+import com.zdfy.purereader.http.protocol.DouBanProtocol;
 import com.zdfy.purereader.ui.activity.DouBanDetailActivity;
 import com.zdfy.purereader.ui.view.DoubleClick;
 import com.zdfy.purereader.ui.view.LoadingPage;
 import com.zdfy.purereader.ui.view.OnDoubleClickListener;
 import com.zdfy.purereader.utils.SPUtils;
 import com.zdfy.purereader.utils.UiUtils;
-import com.zdfy.purereader.http.protocol.DouBanProtocol;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class DouBanFragment extends BaseFragment {
         if (mPostsEntities == null) {
             mPostsEntities = new ArrayList<>();
             mAdapter = new DouBanAdapter(mPostsEntities);
-            mRecyclerView.setAdapter(mAdapter);
+            mParentRecyclerView.setAdapter(mAdapter);
         }
         if (addDatasType == 1 || addDatasType == 3) {
             mPostsEntities.clear();
@@ -155,6 +155,11 @@ public class DouBanFragment extends BaseFragment {
             }
         });
         return view;
+    }
+
+    @Override
+    protected void setLayoutManager() {
+            mParentRecyclerView.setLayoutManager(mParentlayoutManager);
     }
 
     @Override

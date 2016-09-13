@@ -28,10 +28,17 @@
             android:name=".ui.activity.NewsDetailActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".ui.activity.DouBanDetailActivity"
-                  android:theme="@style/AppTheme.NoActionBar"
+        <activity
+            android:name=".ui.activity.DouBanDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity android:name=".ui.activity.ImageDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             >
         </activity>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
     </application>
 
 </manifest>

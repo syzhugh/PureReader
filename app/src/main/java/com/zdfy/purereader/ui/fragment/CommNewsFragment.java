@@ -124,6 +124,11 @@ public class CommNewsFragment extends BaseFragment {
     }
 
     @Override
+    protected void setLayoutManager() {
+        mParentRecyclerView.setLayoutManager(mParentlayoutManager);
+    }
+
+    @Override
     protected void LoadMoreDatas() {
         RefreshDatas();
     }
