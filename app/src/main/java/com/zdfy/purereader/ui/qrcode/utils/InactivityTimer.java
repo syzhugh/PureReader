@@ -26,6 +26,10 @@ import android.os.AsyncTask;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.util.Log;
+import android.widget.TimePicker;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Finishes an activity after a period of inactivity if the device is on battery
@@ -34,92 +38,126 @@ import android.util.Log;
 
 public class InactivityTimer {
 
-	private static final String TAG = InactivityTimer.class.getSimpleName();
+    private static final String TAG = InactivityTimer.class.getSimpleName();
 
-	private static final long INACTIVITY_DELAY_MS = 5 * 60 * 1000L;
+    private static final long INACTIVITY_DELAY_MS = 60 * 1000L;
 
-	private Activity activity;
-	private BroadcastReceiver powerStatusReceiver;
-	private boolean registered;
-	private AsyncTask<Object, Object, Object> inactivityTask;
 
-	public InactivityTimer(Activity activity) {
-		this.activity = activity;
-		powerStatusReceiver = new PowerStatusReceiver();
-		registered = false;
-		onActivity();
-	}
+    private Activity activity;
+    private BroadcastReceiver powerStatusReceiver;
+    private boolean registered;
+    private AsyncTask<Object, Object, Object> inactivityTask;
 
-	@SuppressLint("NewApi")
-	public synchronized void onActivity() {
-		cancel();
-		inactivityTask = new InactivityAsyncTask();
-		if (Build.VERSION.SDK_INT >= 11) {
-			inactivityTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-		} else {
-			inactivityTask.execute();
-		}
-	}
+    public InactivityTimer(Activity activity) {
+        this.activity = activity;
+        powerStatusReceiver = new PowerStatusReceiver();
+        registered = false;
+//		onActivity();
+    }
 
-	public synchronized void onPause() {
-		cancel();
-		if (registered) {
-			activity.unregisterReceiver(powerStatusReceiver);
-			registered = false;
-		} else {
-			Log.w(TAG, "PowerStatusReceiver was never registered?");
-		}
-	}
+    @SuppressLint("NewApi")
+    public synchronized void onActivity() {
+        cancel();
+        inactivityTask = new InactivityAsyncTask();
+        if (Build.VERSION.SDK_INT >= 11) {
+            inactivityTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            inactivityTask.execute();
+        }
+    }
 
-	public synchronized void onResume() {
-		if (registered) {
-			Log.w(TAG, "PowerStatusReceiver was already registered?");
-		} else {
-			activity.registerReceiver(powerStatusReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-			registered = true;
-		}
-		onActivity();
-	}
+    public synchronized void onPause() {
+        cancel();
+        if (registered) {
+            activity.unregisterReceiver(powerStatusReceiver);
+            registered = false;
+        } else {
+            Log.w(TAG, "PowerStatusReceiver was never registered?");
+        }
+    }
 
-	private synchronized void cancel() {
-		AsyncTask<?, ?, ?> task = inactivityTask;
-		if (task != null) {
-			task.cancel(true);
-			inactivityTask = null;
-		}
-	}
+    public synchronized void onResume() {
+        if (registered) {
+            Log.w(TAG, "PowerStatusReceiver was already registered?");
+        } else {
+            activity.registerReceiver(powerStatusReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            registered = true;
+        }
+        onActivity();
+    }
 
-	public void shutdown() {
-		cancel();
-	}
+    private synchronized void cancel() {
+        AsyncTask<?, ?, ?> task = inactivityTask;
+        if (task != null) {
+            task.cancel(true);
 
-	private class PowerStatusReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
-				// 0 indicates that we're on battery
-				boolean onBatteryNow = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) <= 0;
-				if (onBatteryNow) {
-					InactivityTimer.this.onActivity();
-				} else {
-					InactivityTimer.this.cancel();
-				}
-			}
-		}
-	}
 
-	private class InactivityAsyncTask extends AsyncTask<Object, Object, Object> {
-		@Override
-		protected Object doInBackground(Object... objects) {
-			try {
-				Thread.sleep(INACTIVITY_DELAY_MS);
-				Log.i(TAG, "Finishing activity due to inactivity");
-				activity.finish();
-			} catch (InterruptedException e) {
-				// continue without killing
-			}
-			return null;
-		}
-	}
+            inactivityTask = null;
+        }
+    }
+
+    public void shutdown() {
+        cancel();
+    }
+
+    private class PowerStatusReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
+                // 0 indicates that we're on battery
+                boolean onBatteryNow = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) <= 0;
+                if (onBatteryNow) {
+                    InactivityTimer.this.onActivity();
+                } else {
+                    InactivityTimer.this.cancel();
+                }
+            }
+        }
+    }
+
+    private class InactivityAsyncTask extends AsyncTask<Object, Object, Object> {
+        @Override
+        protected Object doInBackground(Object... objects) {
+            Log.i("info", "doInBackground-----------------------------");
+
+//			for (int i=0;i<60;i++){
+//				Log.i("info","-----------------------------"+i);
+//				try {
+//					Thread.sleep(1000);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			activity.finish();
+
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    activity.finish();
+                }
+            };
+
+            Timer timer = new Timer();
+            timer.schedule(timerTask,0,12*1000);
+
+
+      Thread       new Thread() {
+                @Override
+                public void run() {
+                    try {
+//                        Thread.sleep(INACTIVITY_DELAY_MS);
+                        Thread.sleep(12*1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Log.i("info", "-----------------------------");
+                    activity.finish();
+                }
+            }.start();
+
+
+            return null;
+        }
+    }
 
 }

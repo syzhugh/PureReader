@@ -49,7 +49,6 @@ import butterknife.OnClick;
 
 public class MCaptureActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
-
     /*view*/
     private RelativeLayout container;
 
@@ -58,10 +57,11 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
 
     @Bind(R.id.cap_shade_error)
     ImageView capShadeError;
-    @Bind(R.id.cap_scan)
-    ImageView capScanbar;
     @Bind(R.id.cap_cropview)
     RelativeLayout capCropview;
+
+    @Bind(R.id.cap_scan)
+    ImageView capScanbar;
     @Bind(R.id.cap_picfromfiles)
     ImageView capfromfiles;
 
@@ -128,19 +128,16 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     protected void onResume() {
-        Log.i("info", "onResume-----------------------------");
         super.onResume();
 
         cameraManager = new CameraManager(getApplication());
-
         capActHandler = null;
-
         if (hasSurface) {
             initCamera(capSurface.getHolder());
         } else {
             capSurface.getHolder().addCallback(this);
         }
-
+        timer.onResume();
     }
 
     @Override
@@ -151,7 +148,7 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         }
 
         beepManager.close();
-//        timer.onPause();
+        timer.onPause();
         cameraManager.closeDriver();
 
         if (!hasSurface) {
@@ -166,12 +163,12 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     protected void onDestroy() {
+        timer.shutdown();
         super.onDestroy();
     }
 
     /*-------------核心部分--------------*/
     public void initCrop() {
-        Log.i("info", "initCrop-----------------------------");
         int cameraWidth = cameraManager.getCameraResolution().y;
         int cameraHeight = cameraManager.getCameraResolution().x;
 
@@ -197,7 +194,6 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initCamera(SurfaceHolder holder) {
-        Log.i("info", "initCamera-----------------------------");
         if (holder == null) {
             throw new IllegalStateException("No SurfaceHolder provided");
         }
@@ -221,8 +217,8 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void handleDecode(String result, Bundle bundle) {
-        Log.i("info", "handleDecode-----------------------------");
 
+//        timer.onActivity();
         beepManager.playBeepSoundAndVibrate();
         /*
         * String SCAN_MODE
@@ -231,7 +227,6 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         * byteArray DecodeThread.BARCODE_BITMAP
         * */
 
-        Log.i("info", "isUrl" + CommonUtils.isUrl(result));
         if (!CommonUtils.isEmpty(result) && CommonUtils.isUrl(result)) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(result));
@@ -248,7 +243,6 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
 
     /*------------响应操作---------------*/
     private void cameraSuccess() {
-        Log.i("info", "cameraSuccess-----------------------------");
         capShadeError.setVisibility(View.GONE);
         initCrop();
         ViewHelper.setPivotX(capScanbar, 0f);
@@ -263,7 +257,6 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void cameraFailed() {
-        Log.i("info", "cameraFailed-----------------------------");
         capShadeError.setVisibility(View.VISIBLE);
         Toast.makeText(MCaptureActivity.this, "开启失败", Toast.LENGTH_SHORT).show();
     }
@@ -276,19 +269,15 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.cap_bt_fromfiles:
-                Log.i("info", "cap_bt_fromfiles");
                 startActFromFiles();
                 break;
             case R.id.cap_bt_light:
-                Log.i("info", "cap_bt_light");
                 changeLightState();
                 break;
             case R.id.cap_bt_qrcode:
-                Log.i("info", "cap_bt_qrcode");
                 changeToQRCode();
                 break;
             case R.id.cap_bt_barcode:
-                Log.i("info", "cap_bt_barcode");
                 changeToBarCode();
                 break;
         }
@@ -411,13 +400,12 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
             return;
         if (requestCode == PIC_PICKER_REQUESTCODE) {
             Uri uri = data.getData();
-            Log.e("uri", uri.toString());
+
             ContentResolver cr = this.getContentResolver();
             try {
                 Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
                 /* 将Bitmap设定到ImageView */
                 capfromfiles.setImageBitmap(bitmap);
-
 
                 String result = new DecodeUtils(DecodeUtils.DECODE_DATA_MODE_ALL)
                         .decodeWithZxing(bitmap);
@@ -437,10 +425,9 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     /*-------------surface接口--------------*/
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.i("info", "surfaceCreated-----------------------------");
-        if (holder == null) {
-
-        }
+//        if (holder == null) {
+//          Log.e(TAG_LOG, "*** WARNING *** surfaceCreated() gave us a null surface!");
+//        }
         if (!hasSurface) {
             hasSurface = true;
             initCamera(holder);
@@ -449,13 +436,11 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.i("info", "surfaceChanged-----------------------------");
         initCamera(holder);
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.i("info", "surfaceDestroyed-----------------------------");
         hasSurface = false;
     }
 
