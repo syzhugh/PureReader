@@ -10,4 +10,11 @@ public class Constant {
     public static final int STATE_LOAD_ERROR = 3;// 加载失败
     public static final int STATE_LOAD_EMPTY = 4;// 数据为空
     public static final int STATE_LOAD_SUCCESS = 5;// 加载成功
+    ///////////////////Intent传递常量/////////////////////////////////////////////
+    public static final String NEWS_BEAN="news_bean";
+    public static final String DOUBAN_BEAN="douban_bean";
+    public static final String PIC_URL ="pic_url";
+    ///////////////////SP部分////////////////////////////////////////////////////
+    public static final String FIRST_TO_USE="first_to_use";
+   
 }

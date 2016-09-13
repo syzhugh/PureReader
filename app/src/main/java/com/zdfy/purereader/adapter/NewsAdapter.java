@@ -4,39 +4,30 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.domain.NewsInfo.ShowapiResBodyEntity.PagebeanEntity.ContentlistEntity;
 import com.zdfy.purereader.utils.UiUtils;
-
-import org.xutils.x;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-;
-
 /**
  * Created by ZhangPeng on 2016/9/7.
  */
-public class NewsAdapter extends RecyclerView.Adapter {
-
-    private static final int TYPE_ITEM = 0;
-    private static final int TYPE_FOOTER = 1;
-    private List<ContentlistEntity> datas;
-
+public class NewsAdapter extends BaseAdapter<ContentlistEntity> {
     public NewsAdapter(List<ContentlistEntity> datas) {
-        this.datas = datas;
+        super(datas);
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    protected RecyclerView.ViewHolder createViewItemHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM) {
-            View Item_view = UiUtils.inflate(R.layout.item_recycler_news);
+            View Item_view = UiUtils.inflate(R.layout.item_douban);
             return new ItemViewHolder(Item_view);
         }
         if (viewType == TYPE_FOOTER) {
@@ -47,53 +38,40 @@ public class NewsAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    protected void showBindItemViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ItemViewHolder) {
-          
             if (datas.get(position).getImageurls() != null) {
-                if (datas.get(position).getImageurls().size()!= 0) {
-                    x.image().bind(((ItemViewHolder) holder).mIvNews, datas.get(position).getImageurls().get(0).getUrl());
-                }else{
+                if (datas.get(position).getImageurls().size() != 0) {
+                    Glide.with(UiUtils.getContext())
+                            .load(datas.get(position).getImageurls().get(0).getUrl())
+                            .asBitmap()
+                            .centerCrop()
+                            .error(R.drawable.no_img)
+                            .into(((ItemViewHolder) holder).mImageView);
+
+                } else {
                     return;
                 }
             }
-                ((ItemViewHolder) holder).mTvPubDate.setText(datas.get(position).getPubDate());
-                ((ItemViewHolder) holder).mTvTitle.setText(datas.get(position).getTitle());
-            }
-        }
-        @Override
-        public int getItemCount () {
-            return datas == null ? 0 : datas.size() + 1;
-        }
-
-        @Override
-        public int getItemViewType ( int position){
-            return position + 1 == getItemCount() ? TYPE_FOOTER : TYPE_ITEM;
-        }
-        /**
-         * 普通条目
-         */
-        static class ItemViewHolder extends RecyclerView.ViewHolder {
-            @Bind(R.id.tv_title)
-            TextView mTvTitle;
-            @Bind(R.id.tv_pubDate)
-            TextView mTvPubDate;
-            @Bind(R.id.iv_news)
-            ImageView mIvNews;
-            @Bind(R.id.rl_item)
-            RelativeLayout mRlItem;
-            ItemViewHolder(View view) {
-                super(view);
-                ButterKnife.bind(this, view);
-            }
-        }
-
-        /**
-         * 脚布局加载更多
-         */
-        static class FooterViewHolder extends RecyclerView.ViewHolder {
-            public FooterViewHolder(View footer_view) {
-                super(footer_view);
-            }
+            ((ItemViewHolder) holder).mTvSummary.setText(datas.get(position).getPubDate());
+            ((ItemViewHolder) holder).mTvTitle.setText(datas.get(position).getTitle());
         }
     }
+
+    /**
+     * 普通条目
+     */
+    static class ItemViewHolder extends RecyclerView.ViewHolder {
+        @Bind(R.id.image_view)
+        ImageView mImageView;
+        @Bind(R.id.tv_title)
+        TextView mTvTitle;
+        @Bind(R.id.tv_summary)
+        TextView mTvSummary;
+        ItemViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+    }
+
+}

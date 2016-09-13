@@ -3,6 +3,7 @@ package com.zdfy.purereader.ui.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.zdfy.purereader.R;
@@ -19,11 +20,13 @@ import static com.zdfy.purereader.constant.Constant.STATE_LOAD_UNDO;
  */
 
 public abstract class LoadingPage extends FrameLayout {
+    
     private int mCurrentState = STATE_LOAD_UNDO;// 当前状态
     private View mLoadingPage;
     private View mErrorPage;
     private View mEmptyPage;
     private View mSuccessPage;
+    
     public LoadingPage(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         initView();
@@ -46,6 +49,14 @@ public abstract class LoadingPage extends FrameLayout {
         // 初始化加载失败布局
         if (mErrorPage == null) {
             mErrorPage = UiUtils.inflate(R.layout.page_error);
+            Button mBtnRety= (Button) mErrorPage.findViewById(R.id.btn_retry);
+            mBtnRety.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //重新加载数据
+                    loadData();
+                }
+            });
             addView(mErrorPage);
         }
 

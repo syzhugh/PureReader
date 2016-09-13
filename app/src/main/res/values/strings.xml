@@ -15,4 +15,19 @@
         <item>汽车</item>
         <item>游戏</item>
     </string-array>
+    //////////////////图片浏览的标题///////////////////
+    <string-array name="imagTitles">
+        <item>小清新</item>
+        <item>文艺范</item>
+        <item>性感妹</item>
+        <item>大长腿</item>
+        <item>黑丝袜</item>
+        <item>小翘臀</item>
+    </string-array>
+
+
+    <string name="no_network_connected">没有网络连接</string>
+    <string name="go_to_set">去设置</string>
+    <string name="first_to_use">第一次使用吗?,双击小按钮可以回顶部╮(╯_╰)╭</string>
+    <string name="I_has_know">我明白了\\(^o^)/~</string>
 </resources>

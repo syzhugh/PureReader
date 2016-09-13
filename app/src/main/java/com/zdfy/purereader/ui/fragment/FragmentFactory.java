@@ -9,21 +9,21 @@ import java.util.HashMap;
 /**
  * 批量生产Fragment
  */
-
 public class FragmentFactory {
-    public static HashMap<Integer, BaseFragment> mFragments = new HashMap<>();
-
-    public static BaseFragment createFragment(int position, String name) {
-        BaseFragment fragment = mFragments.get(position);
+    public static HashMap<Integer, BaseFragment> mNewsFragments = new HashMap<>();
+    public static HashMap<Integer, BaseFragment> mImgsFragments = new HashMap<>();
+    public static BaseFragment createNewsFragment(int position, String name) {
+        BaseFragment fragment = mNewsFragments.get(position);
         if (fragment == null) {
             /**
              * 根据channel创建不同的Fragment
              */
-            fragment = new CommNewsFragment(name);
+                    fragment = new CommNewsFragment(name);
         }
         if (fragment != null) {
-            mFragments.put(position, fragment);
+            mNewsFragments.put(position, fragment);
         }
         return fragment;
     }
+
 }

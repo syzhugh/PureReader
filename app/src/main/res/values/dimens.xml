@@ -9,10 +9,18 @@
     <dimen name="text_normal_sp">16sp</dimen>
 
 
+
+    <dimen name="app_bar_height">240dp</dimen>
+    <dimen name="text_margin">16sp</dimen>
+
+
     <!--qrcode -->
     <dimen name="qrcode_width">220dp</dimen>
     <dimen name="qrcode_height">220dp</dimen>
     <!--barcode-->
-    <dimen name="barcode_width">260dp</dimen>
-    <dimen name="barcode_height">140dp</dimen>
+    <dimen name="barcode_width">250dp</dimen>
+    <dimen name="barcode_height">110dp</dimen>
+
+
+
 </resources>

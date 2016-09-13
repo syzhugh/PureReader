@@ -4,7 +4,6 @@ package com.zdfy.purereader.constant;
  * Created by ZhangPeng on 2016/9/7.
  */
 public class ApiConstants {
-
 //    channelName 	新闻频道名称，可模糊匹配。用频道关键字即可，如：军事，财经，				国内，国际等等。
 //    原App中可以实现的栏目
 //    头条 汽车 房产 科技 星座 旅游 时尚 娱乐（划线的不能实现）
@@ -70,4 +69,5 @@ public class ApiConstants {
         UrlForName = UrlForName.replace(ApiConstants.CacheSuffix, "CacheSuffix");
         return UrlForName;
     }
+    
 }

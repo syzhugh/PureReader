@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Process;
 import android.view.View;
+
 import com.zdfy.purereader.application.BaseApplication;
 /**
  * Created by ZhangPeng on 2016/9/5.
@@ -14,7 +15,6 @@ public class UiUtils {
     public static Context getContext() {
         return BaseApplication.getContext();
     }
-
     public static Handler getHandler() {
         return BaseApplication.getHandler();
     }
@@ -100,8 +100,9 @@ public class UiUtils {
     //////////////////////加载布局//////////////////////////
     public static View inflate(int id) {
         return View.inflate(getContext(), id, null);
+//        return View.inflate(getActivity(), id, null);
     }
-
+    
     ///////////////////判断是否运行在主线程///////////////////
     public static boolean isRunOnUIThread() {
         return Process.myTid() == getMainThreadId() ? true : false;

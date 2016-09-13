@@ -50,8 +50,7 @@ public class NewsFragment extends Fragment {
         mTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                fragment = FragmentFactory.createFragment(tab.getPosition(), tabTitles[tab.getPosition()]);
-                fragment.loadData();
+                fragment = FragmentFactory.createNewsFragment(tab.getPosition(), tabTitles[tab.getPosition()]);
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
