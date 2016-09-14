@@ -40,7 +40,6 @@ import java.util.regex.Pattern;
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
 public final class CameraConfigurationUtils {
 
-
     private static final String TAG = "CameraConfiguration";
 
     private static final Pattern SEMICOLON = Pattern.compile(";");

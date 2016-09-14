@@ -39,7 +39,6 @@ public final class CameraManager {
 
     private static final String TAG = CameraManager.class.getSimpleName();
 
-
     private final CameraConfigurationManager configManager;
     private Camera camera;
     private AutoFocusManager autoFocusManager;

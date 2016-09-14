@@ -16,14 +16,9 @@
 
 package com.zdfy.purereader.ui.qrcode.utils;
 
-/**
- * Author:  Tau.Chen
- * Email:   1076559197@qq.com | tauchen1990@gmail.com
- * Date:    15/7/2
- * Description:
- */
-public class Constants {
 
+
+public class Constants {
 
     public static final int ID_START = 0X100;
     public static final int ID_RESTART_PREVIEW = ID_START + 10;

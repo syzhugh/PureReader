@@ -34,7 +34,6 @@ import java.io.IOException;
 
 public class BeepManager implements MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, Closeable {
 
-
     private static final String TAG = BeepManager.class.getSimpleName();
 
     private static final float BEEP_VOLUME = 0.10f;
@@ -65,9 +64,9 @@ public class BeepManager implements MediaPlayer.OnCompletionListener, MediaPlaye
     }
 
     public synchronized void playBeepSoundAndVibrate() {
-        if (playBeep && mediaPlayer != null) {
-            mediaPlayer.start();
-        }
+//        if (playBeep && mediaPlayer != null) {
+//            mediaPlayer.start();
+//        }
         if (vibrate) {
             Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(VIBRATE_DURATION);

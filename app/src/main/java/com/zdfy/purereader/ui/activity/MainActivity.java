@@ -1,5 +1,6 @@
 package com.zdfy.purereader.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -8,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -17,6 +19,7 @@ import com.zdfy.purereader.ui.fragment.NewsFragment;
 import com.zdfy.purereader.ui.fragment.PicFragment;
 import com.zdfy.purereader.ui.fragment.VideoFragment;
 import com.zdfy.purereader.ui.fragment.ZhiHuFragment;
+import com.zdfy.purereader.ui.qrcode.activity.MCaptureActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NewsFragment mNewsFragment;
     private PicFragment mPicFragment;
     private VideoFragment mVideoFragment;
-  
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +87,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_qrcode) {
+            Log.i("info","-----------------------------");
+            startActivity(new Intent(this, MCaptureActivity.class));
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -101,15 +108,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragmentTransaction.add(R.id.fl_container, mZhiHuFragment);
             }
             fragmentTransaction.show(mZhiHuFragment);
-        } else if (id==R.id.nav_douban){
+        } else if (id == R.id.nav_douban) {
             if (mDouBanFragment == null) {
                 mDouBanFragment = new DouBanFragment();
                 fragmentTransaction.add(R.id.fl_container, mDouBanFragment);
             }
-            System.out.println("loadData----DoubanFragment"+System.currentTimeMillis());
+            System.out.println("loadData----DoubanFragment" + System.currentTimeMillis());
             mDouBanFragment.loadData();
             fragmentTransaction.show(mDouBanFragment);
-        }else if (id == R.id.nav_news) {
+        } else if (id == R.id.nav_news) {
             if (mNewsFragment == null) {
                 mNewsFragment = new NewsFragment();
                 fragmentTransaction.add(R.id.fl_container, mNewsFragment);
@@ -136,11 +143,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
     private void hideFragments(FragmentTransaction transaction) {
-        if (mZhiHuFragment!=null){
+        if (mZhiHuFragment != null) {
             transaction.hide(mZhiHuFragment);
         }
-        if (mDouBanFragment!=null){
+        if (mDouBanFragment != null) {
             transaction.hide(mDouBanFragment);
         }
         if (mNewsFragment != null) {

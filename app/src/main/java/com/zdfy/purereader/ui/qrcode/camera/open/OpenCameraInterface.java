@@ -21,7 +21,6 @@ import android.util.Log;
 
 public final class OpenCameraInterface {
 
-
     private static final String TAG = OpenCameraInterface.class.getName();
 
     private OpenCameraInterface() {

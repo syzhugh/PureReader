@@ -18,6 +18,7 @@ package com.zdfy.purereader.ui.qrcode.utils;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.zdfy.purereader.ui.qrcode.activity.MCaptureActivity;
 import com.zdfy.purereader.ui.qrcode.camera.CameraManager;
@@ -30,7 +31,6 @@ import com.zdfy.purereader.ui.qrcode.decode.DecodeThread;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class CaptureActivityHandler extends Handler {
-
 
     private final MCaptureActivity activity;
     private final DecodeThread decodeThread;
@@ -60,14 +60,16 @@ public final class CaptureActivityHandler extends Handler {
     public void handleMessage(Message message) {
         switch (message.what) {
             case Constants.ID_RESTART_PREVIEW:
+                Log.i("info", "ID_RESTART_PREVIEW-----------------------------");
                 restartPreviewAndDecode();
                 break;
             case Constants.ID_DECODE_SUCCESS:
+                Log.i("info", "ID_DECODE_SUCCESS-----------------------------");
                 state = State.SUCCESS;
                 activity.handleDecode((String) message.obj, message.getData());
                 break;
             case Constants.ID_DECODE_FAILED:
-                // We're decoding as fast as possible, so when one decode fails, start another.
+                Log.i("info", "ID_DECODE_FAILED-----------------------------");
                 state = State.PREVIEW;
                 cameraManager.requestPreviewFrame(decodeThread.getHandler(), Constants.ID_DECODE);
                 break;

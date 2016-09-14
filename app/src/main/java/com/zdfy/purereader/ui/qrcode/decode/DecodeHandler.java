@@ -25,14 +25,15 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 
+
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.zdfy.purereader.ui.qrcode.activity.MCaptureActivity;
+import com.zdfy.purereader.ui.qrcode.activity.MResultActivity;
 import com.zdfy.purereader.ui.qrcode.utils.Constants;
 
 import java.io.ByteArrayOutputStream;
 
 public final class DecodeHandler extends Handler {
-
 
     private static final String TAG = DecodeHandler.class.getSimpleName();
 
@@ -85,14 +86,18 @@ public final class DecodeHandler extends Handler {
         size.height = tmp;
 
         String resultStr = null;
+
         Rect cropRect = activity.getCropRect();
         if (null == cropRect) {
             activity.initCrop();
         }
         cropRect = activity.getCropRect();
 
+
         mDecodeUtils.setDataMode(activity.getDataMode());
+
         String zxingStr = mDecodeUtils.decodeWithZxing(rotatedData, size.width, size.height, cropRect);
+
 
         if (!TextUtils.isEmpty(zxingStr)) {
             mDecodeMode = DecodeUtils.DECODE_MODE_ZXING;
@@ -105,14 +110,17 @@ public final class DecodeHandler extends Handler {
             if (handler != null) {
                 Message message = Message.obtain(handler, Constants.ID_DECODE_SUCCESS, resultStr);
                 Bundle bundle = new Bundle();
+
                 PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(rotatedData, size.width, size.height,
                         cropRect.left, cropRect.top,
                         cropRect.width(), cropRect.height(), false);
 
+                bundle.putString(MResultActivity.SCAN_MODE, MResultActivity.FROMCAMERA);
                 bundle.putInt(DecodeThread.DECODE_MODE, mDecodeMode);
                 bundle.putString(DecodeThread.DECODE_TIME, (end - start) + "ms");
 
                 bundleThumbnail(source, bundle);
+
                 message.setData(bundle);
                 message.sendToTarget();
             }
@@ -135,9 +143,11 @@ public final class DecodeHandler extends Handler {
         int[] pixels = source.renderThumbnail();
         int width = source.getThumbnailWidth();
         int height = source.getThumbnailHeight();
+
         Bitmap bitmap = Bitmap.createBitmap(pixels, 0, width, width, height, Bitmap.Config.RGB_565);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 50, out);
+
         bundle.putByteArray(DecodeThread.BARCODE_BITMAP, out.toByteArray());
     }
 }
