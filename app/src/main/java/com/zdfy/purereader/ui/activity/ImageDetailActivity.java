@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,18 +15,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.constant.Constant;
+import com.zdfy.purereader.utils.ToastUtils;
+import com.zdfy.purereader.utils.UiUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import butterknife.Bind;
@@ -38,21 +39,55 @@ public class ImageDetailActivity extends AppCompatActivity {
     @Bind(R.id.iv_detail)
     ImageView mIvDetail;
     private String picUrl;
+    private String picName;
+    private File pureReaderDir;
+    private File externalStorageDirectory;
+    //文件的地址
+    private String mFileurl;
+    //是否已经保存过文件
+    private File isHasSavedFile;
+
+    private boolean isClickShare = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         picUrl = getIntent().getStringExtra(Constant.PIC_URL);
+        picName = getIntent().getStringExtra(Constant.PIC_CREATE);
+
+        try {
+            externalStorageDirectory = Environment.getExternalStorageDirectory();
+            pureReaderDir = new File(externalStorageDirectory, "PureReader");
+            if (!pureReaderDir.exists()) {
+                pureReaderDir.mkdir();
+            }
+            mFileurl = pureReaderDir + "/" + picName;
+            isHasSavedFile = new File(pureReaderDir, picName + ".jpg");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         setContentView(R.layout.activity_image_detail);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Glide.with(this)
-                .load(picUrl)
-                .asBitmap()
-                .centerCrop()
-                .priority(Priority.HIGH)
-                .into(mIvDetail);
+
+        if (isHasSavedFile.exists()) {
+            System.out.println("glideexits~~~~~~~~~~~~~~~~~~~~~~");
+            Glide.with(this)
+                    .load(isHasSavedFile)
+                    .centerCrop()
+                    .priority(Priority.HIGH)
+                    .into(mIvDetail);
+        } else {
+            System.out.println("glide~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Glide.with(this)
+                    .load(picUrl)
+                    .asBitmap()
+                    .centerCrop()
+                    .priority(Priority.HIGH)
+                    .into(mIvDetail);
+        }
 
         mIvDetail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -81,33 +116,44 @@ public class ImageDetailActivity extends AppCompatActivity {
      * 保存图片到本地
      */
     private void saveImage() {
+        System.out.println(mFileurl);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                File externalStorageDirectory = Environment.getExternalStorageDirectory();
-                File pureReaderDir = new File(externalStorageDirectory, "PureReader");
-                if (!pureReaderDir.exists()) {
-                    pureReaderDir.mkdir();
-                }
                 try {
                     Bitmap myBitmap = Glide.with(ImageDetailActivity.this)
                             .load(picUrl)
                             .asBitmap()
                             .centerCrop()
-                            .into(500, 500)
+                            .into(500, 800)
                             .get();
-                    final String url = externalStorageDirectory + "/" + new Date().getTime() + "jpg";
-                    File file = new File(pureReaderDir, new Date().getTime() + ".jpg");
-                    FileOutputStream fos = new FileOutputStream(file);
-                    myBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                    fos.flush();
-                    fos.close();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(ImageDetailActivity.this, url + "保存成功", Toast.LENGTH_SHORT).show();
+                    if (isHasSavedFile.exists()) {
+                        if (!isClickShare) {
+                            UiUtils.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtils.showToast(ImageDetailActivity.this, "图片已存在");
+
+                                }
+                            });
                         }
-                    });
+                        return;
+                    } else {
+                        isHasSavedFile = new File(pureReaderDir, picName + ".jpg");
+                        FileOutputStream fos = new FileOutputStream(isHasSavedFile);
+                        myBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                        fos.flush();
+                        fos.close();
+                        if (!isClickShare) {
+                            UiUtils.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtils.showToast(ImageDetailActivity.this, "保存到" + mFileurl);
+                                }
+                            });
+                        }
+                    }
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -120,21 +166,15 @@ public class ImageDetailActivity extends AppCompatActivity {
             }
         }).start();
     }
+
     //分享单张图片
-    private void shareSingleImage(String url) {
-        try {
-            Glide.with(ImageDetailActivity.this)
-                    .load(picUrl)
-                    .centerCrop()
-                    .into(500, 500)
-                    .get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+    private void shareSingleImage() {
+        if (!isHasSavedFile.exists()) {
+            saveImage();
+            SystemClock.sleep(1000);
         }
-        String imagePath = Environment.getExternalStorageDirectory() + File.separator + "aa.png";
-        Uri imageUri = Uri.fromFile(new File(imagePath));
+        isHasSavedFile = new File(pureReaderDir, picName + ".jpg");
+        Uri imageUri = Uri.fromFile(isHasSavedFile);
         Log.d("share", "uri:" + imageUri);
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
@@ -148,6 +188,16 @@ public class ImageDetailActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
+        }
+        if (item.getItemId() == R.id.action_save) {
+            //此时的点击的是保存按钮
+            isClickShare = false;
+            saveImage();
+        }
+        if (item.getItemId() == R.id.action_share) {
+            //此时点击的是分享按钮
+            isClickShare = true;
+            shareSingleImage();
         }
         return super.onOptionsItemSelected(item);
     }

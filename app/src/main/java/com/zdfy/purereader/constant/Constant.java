@@ -14,6 +14,7 @@ public class Constant {
     public static final String NEWS_BEAN="news_bean";
     public static final String DOUBAN_BEAN="douban_bean";
     public static final String PIC_URL ="pic_url";
+    public static final String PIC_CREATE = "pic_create";
     ///////////////////SP部分////////////////////////////////////////////////////
     public static final String FIRST_TO_USE="first_to_use";
     public static final String HASIN_SPALSH ="HASIN_SPALSH" ;
