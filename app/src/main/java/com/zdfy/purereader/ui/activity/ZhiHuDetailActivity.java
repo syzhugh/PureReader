@@ -42,7 +42,6 @@ public class ZhiHuDetailActivity extends BaseDetailActivity {
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-
             switch (msg.what) {
                 case Constant.MSG_BODY_NOT_EXISTS: {
                     Bundle data = msg.getData();
