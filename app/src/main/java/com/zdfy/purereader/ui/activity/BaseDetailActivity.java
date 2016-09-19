@@ -1,13 +1,16 @@
 package com.zdfy.purereader.ui.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -15,6 +18,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.zdfy.purereader.R;
+import com.zdfy.purereader.constant.ZhiHuApiConstants;
 
 /**
  * Created by ZhangPeng on 2016/9/12.
@@ -82,8 +86,11 @@ public abstract class BaseDetailActivity extends AppCompatActivity {
         mParentWebView.setScrollbarFadingEnabled(true);
         //能够和js交互
         settings.setJavaScriptEnabled(true);
-        //缩放,设置为不能缩放可以防止页面上出现放大和缩小的图标
 
+
+        settings.setJavaScriptEnabled(true);
+        //缩放,设置为不能缩放可以防止页面上出现放大和缩小的图标
+        settings.setBuiltInZoomControls(false);
         //设置自适应屏幕，两者合用
         settings.setUseWideViewPort(true);  //将图片调整到适合webview的大小 
         settings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
@@ -131,11 +138,22 @@ public abstract class BaseDetailActivity extends AppCompatActivity {
         }
     }
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_open_inbroswer,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
         }
+        if (item.getItemId() == R.id.action_open_in_browser){
+            startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(setUri())));
+        }
         return super.onOptionsItemSelected(item);
     }
+
+    protected abstract String setUri();
+        
 }

@@ -11,4 +11,9 @@
     <!--qrcode_shade-->
     <color name="cap_shade_color">#aa000000</color>
     <color name="cap_shade_error">#000</color>
+
+    <color name="slide_1">#4f91ff</color>
+    <color name="slide_2">#fb9c25</color>
+    <color name="slide_3">#5ab55d</color>
+    <color name="slide_4">#ea2d6d</color>
 </resources>

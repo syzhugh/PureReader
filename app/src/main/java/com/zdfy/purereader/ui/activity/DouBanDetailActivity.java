@@ -1,7 +1,6 @@
 package com.zdfy.purereader.ui.activity;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +13,7 @@ import com.bumptech.glide.Priority;
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.constant.Constant;
 import com.zdfy.purereader.domain.DouBanInfo;
+import com.zdfy.purereader.utils.ShareUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -41,7 +41,7 @@ public class DouBanDetailActivity extends BaseDetailActivity {
     }
     @Override
     protected void msetContentView() {
-        setContentView(R.layout.activity_dou_ban_detail);
+        setContentView(R.layout.activity_universal_detail);
         ButterKnife.bind(this);
     }
     
@@ -50,10 +50,7 @@ public class DouBanDetailActivity extends BaseDetailActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent sendIntent = new Intent().setAction(Intent.ACTION_SEND).setType("text/plain");
-                sendIntent.putExtra(Intent.EXTRA_TEXT, datas.getTitle() + " " + datas.getShareUrl() + " 分享来自~PureReader");
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, "分享到"));
+                ShareUtils.shareUrl(DouBanDetailActivity.this,datas.getTitle(),datas.getShareUrl());
             }
         });
     }
@@ -68,6 +65,12 @@ public class DouBanDetailActivity extends BaseDetailActivity {
         mParentToolbar = mToolbar;
         mParentToolbarLayout = mToolbarLayout;
     }
+
+    @Override
+    protected String setUri() {
+        return datas.getShareUrl();
+    }
+
     @Override
     protected void setData() {
         if (datas != null) {

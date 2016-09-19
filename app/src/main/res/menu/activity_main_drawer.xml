@@ -4,27 +4,27 @@
         <item
             android:id="@+id/nav_zhihu"
             android:icon="@drawable/zhihu"
-            android:title="知乎精选"/>
+            android:title="@string/ZhiHuJingXuan"/>
         <item
             android:id="@+id/nav_douban"
             android:icon="@drawable/douban"
-            android:title="豆瓣一刻"/>
+            android:title="@string/DouBanYiKe"/>
         <item
             android:id="@+id/nav_news"
             android:icon="@drawable/newsyuedu"
-            android:title="新闻阅读"/>
+            android:title="@string/XinWenYueDu"/>
         <item
             android:id="@+id/nav_pic"
             android:icon="@drawable/picread"
-            android:title="图片阅读"/>
+            android:title="@string/TuPianYueDu"/>
         <item
             android:id="@+id/nav_video"
             android:icon="@drawable/video"
-            android:title="视频阅读"/>
+            android:title="@string/ShiPingYueDu"/>
         <item
             android:id="@+id/nav_about"
             android:icon="@drawable/about"
-            android:title="关于"/>
+            android:title="@string/GuanYu"/>
     </group>
     <!--<item android:title="Communicate">-->
     <!--<menu>-->

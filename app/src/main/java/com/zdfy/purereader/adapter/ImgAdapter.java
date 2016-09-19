@@ -55,6 +55,7 @@ public class ImgAdapter extends BaseAdapter<ResultsEntity> {
                     intent.setClass(UiUtils.getContext(), ImageDetailActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra(Constant.PIC_URL,datas.get(position).getUrl());
+                    intent.putExtra(Constant.PIC_CREATE, datas.get(position).getCreatedAt());
                     UiUtils.getContext().startActivity(intent);
                 }
             });

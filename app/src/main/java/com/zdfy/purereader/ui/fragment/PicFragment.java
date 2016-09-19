@@ -6,7 +6,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.adapter.ImgAdapter;
 import com.zdfy.purereader.constant.GankApis;
@@ -85,7 +84,6 @@ public class PicFragment extends BaseFragment {
         //设置layoutManager
         gridLayoutManager = new GridLayoutManager(UiUtils.getContext(), 2);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
 //        staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mParentRecyclerView.setLayoutManager(gridLayoutManager);
     }

@@ -32,5 +32,12 @@
     <string name="go_to_set">去设置</string>
     <string name="first_to_use">第一次使用吗?,双击小按钮可以回顶部╮(╯_╰)╭</string>
     <string name="I_has_know">我明白了\\(^o^)/~</string>
-
+    <string name="ZhiHuJingXuan">知乎精选</string>
+    <string name="DouBanYiKe">豆瓣一刻</string>
+    <string name="XinWenYueDu">新闻阅读</string>
+    <string name="TuPianYueDu">图片阅读</string>
+    <string name="ShiPingYueDu">视频阅读</string>
+    <string name="GuanYu">关于</string>
+    <string name="loaded_failed">加载失败</string>
+    <string name="action_open_in_browser">在浏览器中打开、</string>
 </resources>

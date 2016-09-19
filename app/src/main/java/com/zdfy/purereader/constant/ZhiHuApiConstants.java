@@ -36,7 +36,9 @@ public class ZhiHuApiConstants {
     // 知乎日报的生日为2013 年 5 月 19 日，如果before后面的数字小于20130520，那么只能获取到空消息
     // the birthday of ZhiHuDaily is May 19th, 2013. So if the number is lower than 20130520, you will get a null value of post
     public static final String HISTORY = "http://news.at.zhihu.com/api/4/news/before/";
-
+    public static String getZhihuApi(int year,String month,String day){
+        return HISTORY+String.valueOf(year)+String.valueOf(month)+String.valueOf(day);
+    }
     // 新闻额外消息
     // extra content of post
     // 输入新闻的ID，获取对应新闻的额外信息，如评论数量，所获的『赞』的数量。
