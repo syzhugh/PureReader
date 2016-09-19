@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/PureReader.iml" filepath="$PROJECT_DIR$/PureReader.iml" />
       <module fileurl="file://$PROJECT_DIR$/PureReaders.iml" filepath="$PROJECT_DIR$/PureReaders.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vitamio/vitamio.iml" filepath="$PROJECT_DIR$/vitamio/vitamio.iml" />
     </modules>
   </component>
 </project>
