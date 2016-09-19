@@ -1,13 +1,16 @@
 package com.zdfy.purereader.ui.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -15,6 +18,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.zdfy.purereader.R;
+import com.zdfy.purereader.constant.ZhiHuApiConstants;
 
 /**
  * Created by ZhangPeng on 2016/9/12.
@@ -134,11 +138,22 @@ public abstract class BaseDetailActivity extends AppCompatActivity {
         }
     }
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_open_inbroswer,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
         }
+        if (item.getItemId() == R.id.action_open_in_browser){
+            startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(setUri())));
+        }
         return super.onOptionsItemSelected(item);
     }
+
+    protected abstract String setUri();
+        
 }

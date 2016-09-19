@@ -1,7 +1,4 @@
 package com.zdfy.purereader.ui.activity;
-
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,25 +6,20 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.constant.Constant;
 import com.zdfy.purereader.constant.ZhiHuApiConstants;
 import com.zdfy.purereader.utils.HttpUtils;
-
+import com.zdfy.purereader.utils.ShareUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
 public class ZhiHuDetailActivity extends BaseDetailActivity {
     @Bind(R.id.image_view)
     ImageView mImageView;
@@ -82,10 +74,7 @@ public class ZhiHuDetailActivity extends BaseDetailActivity {
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent sendIntent = new Intent().setAction(Intent.ACTION_SEND).setType("text/plain");
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, zhihu_title + " " + mShareUrl + " 分享来自~PureReader");
-                    sendIntent.setType("text/plain");
-                    startActivity(Intent.createChooser(sendIntent, "分享到"));
+                    ShareUtils.shareUrl(ZhiHuDetailActivity.this, zhihu_title, mShareUrl);
                 }
             });
             super.handleMessage(msg);
@@ -94,7 +83,7 @@ public class ZhiHuDetailActivity extends BaseDetailActivity {
 
     @Override
     protected void initEvents() {
-    //do nothing
+        //do nothing
     }
 
     @Override
@@ -115,7 +104,6 @@ public class ZhiHuDetailActivity extends BaseDetailActivity {
                         Message msg = Message.obtain();
                         msg.what = Constant.MSG_BODY_NOT_EXISTS;
                         Bundle bundle = new Bundle();
-//                        bundle.putBoolean(Constant.HAS_NO_BODY, true);
                         bundle.putString(Constant.SHARE_URL, jsonObject.getString("share_url"));
                         msg.setData(bundle);
                         mHandler.sendMessage(msg);
@@ -176,15 +164,11 @@ public class ZhiHuDetailActivity extends BaseDetailActivity {
                 }
             }
         });
-
-
     }
-
     @Override
     protected void loadWebViewUrl() {
 //do nothing
     }
-
     @Override
     protected void msetContentView() {
         setContentView(R.layout.activity_universal_detail);
@@ -197,24 +181,13 @@ public class ZhiHuDetailActivity extends BaseDetailActivity {
         id = getIntent().getIntExtra(Constant.ZHIHU_ID, 0);
         mImage = getIntent().getStringExtra(Constant.ZHIHU_IMAGE);
     }
-
     @Override
     protected void ImplParents() {
         mParentWebView = mWebView;
         mParentToolbar = mToolbar;
         mParentToolbarLayout = mToolbarLayout;
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_open_inbroswer,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_open_in_browser){
-            startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(ZhiHuApiConstants.ZHIHU_DAILY_BASE_URL + this.id)));
-        }
-        return super.onOptionsItemSelected(item);
+    protected String setUri() {
+        return ZhiHuApiConstants.ZHIHU_DAILY_BASE_URL + this.id;
     }
 }

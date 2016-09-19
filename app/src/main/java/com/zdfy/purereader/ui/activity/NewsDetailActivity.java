@@ -66,6 +66,12 @@ public class NewsDetailActivity extends BaseDetailActivity {
         mParentToolbar=mToolbar;
         mParentToolbarLayout=mToolbarLayout;
     }
+
+    @Override
+    protected String setUri() {
+        return datas.getLink();
+    }
+
     /**
      * 设置数据
      */
