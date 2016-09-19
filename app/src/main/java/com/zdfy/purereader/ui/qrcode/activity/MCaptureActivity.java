@@ -109,6 +109,11 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         ButterKnife.bind(this);
 
         init();
+
+
+
+
+
     }
 
     private void init() {

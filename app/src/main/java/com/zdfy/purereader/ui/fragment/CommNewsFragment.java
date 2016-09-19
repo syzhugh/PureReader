@@ -34,7 +34,7 @@ public class CommNewsFragment extends BaseFragment {
     RecyclerView mRecyclerView;
     @Bind(R.id.swipeRefreshLayout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    
+
     private String channelName;
     private List<ContentlistEntity> contentlist;
     private int mCurrentPage = 1;
