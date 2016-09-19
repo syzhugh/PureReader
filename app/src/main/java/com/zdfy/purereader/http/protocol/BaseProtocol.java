@@ -27,7 +27,6 @@ public abstract class BaseProtocol<T> {
         }
         return null;
     }
-
     /**
      * 解析数据,由子类实现
      *

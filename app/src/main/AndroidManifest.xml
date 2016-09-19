@@ -35,8 +35,7 @@
         </activity>
         <activity
             android:name=".ui.activity.ImageDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <meta-data
@@ -49,18 +48,22 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-
         <activity
             android:name=".ui.qrcode.activity.MResultActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".ui.activity.SpalashActivity"
-            android:theme="@style/AppSplash"
-            >
+            android:theme="@style/AppSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.activity.ZhiHuDetailActivity"
+                  android:theme="@style/AppTheme.NoActionBar"
+            >
+        </activity>
     </application>
+
 </manifest>

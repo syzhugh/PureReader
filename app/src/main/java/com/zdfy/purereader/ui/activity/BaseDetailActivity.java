@@ -82,8 +82,11 @@ public abstract class BaseDetailActivity extends AppCompatActivity {
         mParentWebView.setScrollbarFadingEnabled(true);
         //能够和js交互
         settings.setJavaScriptEnabled(true);
-        //缩放,设置为不能缩放可以防止页面上出现放大和缩小的图标
 
+
+        settings.setJavaScriptEnabled(true);
+        //缩放,设置为不能缩放可以防止页面上出现放大和缩小的图标
+        settings.setBuiltInZoomControls(false);
         //设置自适应屏幕，两者合用
         settings.setUseWideViewPort(true);  //将图片调整到适合webview的大小 
         settings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小

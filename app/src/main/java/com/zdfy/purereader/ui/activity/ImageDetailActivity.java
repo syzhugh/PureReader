@@ -133,7 +133,6 @@ public class ImageDetailActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     ToastUtils.showToast(ImageDetailActivity.this, "图片已存在");
-
                                 }
                             });
                         }

@@ -20,6 +20,7 @@ import com.zdfy.purereader.ui.fragment.PicFragment;
 import com.zdfy.purereader.ui.fragment.VideoFragment;
 import com.zdfy.purereader.ui.fragment.ZhiHuFragment;
 import com.zdfy.purereader.ui.qrcode.activity.MCaptureActivity;
+import com.zdfy.purereader.utils.UiUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NewsFragment mNewsFragment;
     private PicFragment mPicFragment;
     private VideoFragment mVideoFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,28 +45,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initViews();
         initData();
     }
-
     /**
      * 初始化数据
      */
     private void initData() {
-        mNewsFragment = new NewsFragment();
+       
+        mZhiHuFragment = new ZhiHuFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.fl_container, mNewsFragment);
+        fragmentTransaction.add(R.id.fl_container, mZhiHuFragment);
         fragmentTransaction.commit();
 
+        setToolBarTitle(UiUtils.getString(R.string.ZhiHuJingXuan));
+    }
+
+    /**
+     * 设置ToolBar标题
+     * @param titleName
+     */
+    private void setToolBarTitle(String titleName) {
+        mToolbar.setTitle(titleName);
     }
 
     private void initViews() {
+        setToolBarTitle(UiUtils.getString(R.string.ZhiHuJingXuan));
         setSupportActionBar(mToolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.setDrawerListener(toggle);
         toggle.syncState();
         mNavView.setNavigationItemSelectedListener(this);
-
     }
-
+    
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -107,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mZhiHuFragment = new ZhiHuFragment();
                 fragmentTransaction.add(R.id.fl_container, mZhiHuFragment);
             }
+            setToolBarTitle(UiUtils.getString(R.string.ZhiHuJingXuan));
             fragmentTransaction.show(mZhiHuFragment);
         } else if (id == R.id.nav_douban) {
             if (mDouBanFragment == null) {
@@ -114,19 +124,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragmentTransaction.add(R.id.fl_container, mDouBanFragment);
             }
             System.out.println("loadData----DoubanFragment" + System.currentTimeMillis());
-            mDouBanFragment.loadData();
+//            mDouBanFragment.loadData();
+            setToolBarTitle(UiUtils.getString(R.string.DouBanYiKe));
             fragmentTransaction.show(mDouBanFragment);
         } else if (id == R.id.nav_news) {
             if (mNewsFragment == null) {
                 mNewsFragment = new NewsFragment();
                 fragmentTransaction.add(R.id.fl_container, mNewsFragment);
             }
+
+            setToolBarTitle(UiUtils.getString(R.string.XinWenYueDu));
             fragmentTransaction.show(mNewsFragment);
         } else if (id == R.id.nav_pic) {
             if (mPicFragment == null) {
                 mPicFragment = new PicFragment();
                 fragmentTransaction.add(R.id.fl_container, mPicFragment);
             }
+
+            setToolBarTitle(UiUtils.getString(R.string.TuPianYueDu));
             fragmentTransaction.show(mPicFragment);
 
         } else if (id == R.id.nav_video) {
@@ -134,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mVideoFragment = new VideoFragment();
                 fragmentTransaction.add(R.id.fl_container, mVideoFragment);
             }
+            setToolBarTitle(UiUtils.getString(R.string.ShiPingYueDu));
             fragmentTransaction.show(mVideoFragment);
 
         } else if (id == R.id.nav_about) {

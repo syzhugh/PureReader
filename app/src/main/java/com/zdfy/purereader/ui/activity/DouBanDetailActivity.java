@@ -41,7 +41,7 @@ public class DouBanDetailActivity extends BaseDetailActivity {
     }
     @Override
     protected void msetContentView() {
-        setContentView(R.layout.activity_dou_ban_detail);
+        setContentView(R.layout.activity_universal_detail);
         ButterKnife.bind(this);
     }
     
