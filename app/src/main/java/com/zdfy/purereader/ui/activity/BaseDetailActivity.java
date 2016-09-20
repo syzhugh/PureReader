@@ -18,7 +18,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.zdfy.purereader.R;
-import com.zdfy.purereader.constant.ZhiHuApiConstants;
 
 /**
  * Created by ZhangPeng on 2016/9/12.

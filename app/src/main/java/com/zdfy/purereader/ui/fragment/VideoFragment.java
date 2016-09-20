@@ -8,9 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.zdfy.purereader.utils.UiUtils;
-
 /**
  * Created by ZhangPeng on 2016/9/6.
  */

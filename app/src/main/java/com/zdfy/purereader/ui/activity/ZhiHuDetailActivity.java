@@ -166,7 +166,6 @@ public class ZhiHuDetailActivity extends BaseDetailActivity {
     }
     @Override
     protected void loadWebViewUrl() {
-//do nothing
     }
     @Override
     protected void msetContentView() {
