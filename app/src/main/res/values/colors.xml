@@ -12,6 +12,13 @@
     <color name="cap_shade_color">#aa000000</color>
     <color name="cap_shade_error">#000</color>
 
+    <!--video-->
+    <color name="video_bottom_textcolor_selected">#000000</color>
+    <color name="video_bottom_textcolor">#848383</color>
+
+    <color name="video_shade_pressed">#11000000</color>
+    <color name="video_shade">#68000000</color>
+
     <color name="slide_1">#4f91ff</color>
     <color name="slide_2">#fb9c25</color>
     <color name="slide_3">#5ab55d</color>

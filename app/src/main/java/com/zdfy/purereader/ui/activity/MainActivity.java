@@ -17,7 +17,7 @@ import com.zdfy.purereader.R;
 import com.zdfy.purereader.ui.fragment.DouBanFragment;
 import com.zdfy.purereader.ui.fragment.NewsFragment;
 import com.zdfy.purereader.ui.fragment.PicFragment;
-import com.zdfy.purereader.ui.fragment.VideoFragment;
+import com.zdfy.purereader.ui.fragment.video.VideoFragment;
 import com.zdfy.purereader.ui.fragment.ZhiHuFragment;
 import com.zdfy.purereader.ui.qrcode.activity.MCaptureActivity;
 import com.zdfy.purereader.utils.UiUtils;
@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NewsFragment mNewsFragment;
     private PicFragment mPicFragment;
     private VideoFragment mVideoFragment;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

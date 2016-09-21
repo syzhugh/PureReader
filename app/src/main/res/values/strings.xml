@@ -40,4 +40,9 @@
     <string name="GuanYu">关于</string>
     <string name="loaded_failed">加载失败</string>
     <string name="action_open_in_browser">在浏览器中打开、</string>
+
+    <!--video-->
+    <string name="video_bottom_daily">每日精选</string>
+    <string name="video_bottom_findmore">发现更多</string>
+    <string name="video_bottom_fav">我的收藏</string>
 </resources>
