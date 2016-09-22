@@ -68,6 +68,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <!-- 必须初始化 -->
         <activity
             android:name="io.vov.vitamio.activity.InitActivity"

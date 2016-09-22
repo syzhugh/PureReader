@@ -188,7 +188,7 @@ public class CustomMediaController extends MediaController {
                 onVolumeSlide((mOldY - y) / windowHeight);
             } else if (mOldX < windowWidth * 1.0 / 4.0) {// 左边滑动 屏幕 1/4
                 onBrightnessSlide((mOldY - y) / windowHeight);
-            } else {// 左边滑动 屏幕 1/4
+            } else {
                 onProgressSlide((x - mOldX) / windowWidth);
             }
 
@@ -244,7 +244,7 @@ public class CustomMediaController extends MediaController {
     private void onProgressSlide(float v) {
         long position = videoView.getCurrentPosition();
 
-        float scrollTo = position + v * (5 * 1000);
+        float scrollTo = position + v * (8 * 1000);
         videoView.seekTo((long) scrollTo);
     }
 

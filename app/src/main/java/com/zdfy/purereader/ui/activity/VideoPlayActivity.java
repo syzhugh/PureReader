@@ -66,9 +66,10 @@ public class VideoPlayActivity extends AppCompatActivity implements MediaPlayer.
     private void init() {
         fileName = getIntent().getStringExtra(FILENAME);
         playUri = getIntent().getStringExtra(PLAYURI);
+
         mediaController = new MediaController(this);
         customController = new CustomMediaController(this, videoView, this);
-        customController.setFileName(FILENAME);
+        customController.setFileName(fileName);
     }
 
 

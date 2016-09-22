@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,7 +18,6 @@ import com.zdfy.purereader.R;
 import com.zdfy.purereader.adapter.VideoDailyAdapter;
 import com.zdfy.purereader.constant.Constant;
 import com.zdfy.purereader.domain.VideoInfo;
-import com.zdfy.purereader.ui.activity.MainActivity;
 import com.zdfy.purereader.ui.activity.VideoDetailActivity;
 import com.zdfy.purereader.utils.HttpUtils;
 
@@ -117,7 +115,6 @@ public class VDailyFragment extends Fragment implements HttpUtils.CallBack, Swip
         it.putExtra("itemListBean", itemListBean);
 
         getActivity().startActivity(it);
-
 
     }
 
