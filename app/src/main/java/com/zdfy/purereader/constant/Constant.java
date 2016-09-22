@@ -33,7 +33,8 @@ public class Constant {
     public static final String HASIN_SPALSH = "hasin_spalsh";
 
 
-
+    public static final String firToken = "a6bcf20248e36f78a6aa8cab24296238";
+    public static final String AUTO_UPDATE ="auto_update";
 }
 
 

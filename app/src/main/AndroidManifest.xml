@@ -12,6 +12,9 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
 
     <uses-feature android:name="android.hardware.camera"/>
+    <!-- 必选 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <application
         android:name=".application.BaseApplication"
@@ -60,8 +63,17 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.ZhiHuDetailActivity"
-                  android:theme="@style/AppTheme.NoActionBar"
+        <activity
+            android:name=".ui.activity.ZhiHuDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <meta-data
+            android:name="BUG_HD_SDK_GENERAL_KEY"
+            android:value="654dca76e2d513e6cf80c36cc883df52"/>
+        <activity
+            android:name=".ui.activity.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             >
         </activity>
     </application>

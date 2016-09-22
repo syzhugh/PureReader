@@ -57,7 +57,6 @@ public class ImageDetailActivity extends AppCompatActivity {
     //是否已经保存过文件
     private File isHasSavedFile;
     private boolean isClickShare = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +77,6 @@ public class ImageDetailActivity extends AppCompatActivity {
                         doOnPermissionDenied();
                     }
                 }).ask(REQUEST_CODE_STORAGE);
-//        initFiles();
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mIvDetail.setOnLongClickListener(new View.OnLongClickListener() {
@@ -128,13 +126,15 @@ public class ImageDetailActivity extends AppCompatActivity {
             }
         }).show();
     }
+
     @Override
     protected void onRestart() {
         super.onRestart();
-                if (mStoragePermissionRequest!=null){
+        if (mStoragePermissionRequest != null) {
             mStoragePermissionRequest.ask(REQUEST_CODE_STORAGE);
         }
     }
+
     private void doOnPermissionGranted() {
         initFiles();
         if (isHasSavedFile.exists()) {
@@ -221,6 +221,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
         shareIntent.setType("image/*");
         startActivity(Intent.createChooser(shareIntent, "分享到"));
+
     }
 
     @Override
@@ -238,6 +239,7 @@ public class ImageDetailActivity extends AppCompatActivity {
             //此时点击的是分享按钮
             isClickShare = true;
             shareSingleImage();
+
         }
         return super.onOptionsItemSelected(item);
     }

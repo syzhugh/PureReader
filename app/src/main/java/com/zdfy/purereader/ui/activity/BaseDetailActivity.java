@@ -23,6 +23,7 @@ import com.zdfy.purereader.R;
  * Created by ZhangPeng on 2016/9/12.
  */
 public abstract class BaseDetailActivity extends AppCompatActivity {
+    
     protected Toolbar mParentToolbar;
     protected CollapsingToolbarLayout mParentToolbarLayout;
     protected ProgressDialog mProgressDialog = null;
