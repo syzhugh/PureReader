@@ -1,5 +1,6 @@
 package com.zdfy.purereader.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -122,7 +123,7 @@ public class VideoInfo {
             this.itemList = itemList;
         }
 
-        public static class ItemListBean {
+        public static class ItemListBean implements Serializable {
             /**
              * author : {"description":"干货演讲，分享人生。","icon":"http://img.kaiyanapp.com/be0cdbff1cf1755c7aa78edee08db42b.jpeg","id":142,"latestReleaseTime":1474387831000,"link":"","name":"TED","videoNum":15}
              * category : 科普
@@ -174,9 +175,10 @@ public class VideoInfo {
                 this.type = type;
             }
 
-            public static class DataBean {
 
-                //"dataType": "TextHeader",
+            public static class DataBean implements Serializable {
+
+//            "dataType": "TextHeader",
 //            "font": "lobster",
 //            "text": "- Sep. 20 -"
 
@@ -484,7 +486,7 @@ public class VideoInfo {
                     }
                 }
 
-                public static class ConsumptionBean {
+                public static class ConsumptionBean implements Serializable{
                     private int collectionCount;
                     private int replyCount;
                     private int shareCount;
@@ -514,7 +516,7 @@ public class VideoInfo {
                     }
                 }
 
-                public static class CoverBean {
+                public static class CoverBean implements Serializable{
                     private String blurred;
                     private String detail;
                     private String feed;
@@ -544,7 +546,7 @@ public class VideoInfo {
                     }
                 }
 
-                public static class ProviderBean {
+                public static class ProviderBean implements Serializable{
                     private String alias;
                     private String icon;
                     private String name;
@@ -574,7 +576,7 @@ public class VideoInfo {
                     }
                 }
 
-                public static class WebUrlBean {
+                public static class WebUrlBean implements Serializable{
                     private String forWeibo;
                     private String raw;
 
@@ -595,7 +597,7 @@ public class VideoInfo {
                     }
                 }
 
-                public static class PlayInfoBean {
+                public static class PlayInfoBean implements Serializable{
                     private int height;
                     private String name;
                     private String type;
@@ -643,7 +645,7 @@ public class VideoInfo {
                     }
                 }
 
-                public static class TagsBean {
+                public static class TagsBean implements Serializable{
                     private String actionUrl;
                     private int id;
                     private String name;

@@ -65,7 +65,8 @@ public class VideoFragment extends Fragment {
         adapter = new VideoPagerAdapter(getActivity().getSupportFragmentManager(), list);
         videoViewpager.setAdapter(adapter);
         videoViewpager.setOnPageChangeListener(pageChangeListener);
-        videoViewpager.setCurrentItem(0);
+
+//        videoViewpager.setCurrentItem(0);
         videoDaily.setSelected(true);
     }
 

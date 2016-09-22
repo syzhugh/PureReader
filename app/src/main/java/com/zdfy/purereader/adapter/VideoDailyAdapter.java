@@ -63,7 +63,7 @@ public class VideoDailyAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         ItemListBean.DataBean dataBean = list.get(position).getData();
         if (holder instanceof MHolder0) {
             ((MHolder0) holder).itemVideoTitle.setText(dataBean.getTitle());
@@ -74,10 +74,21 @@ public class VideoDailyAdapter extends RecyclerView.Adapter {
 
             Glide.with(context)
                     .load(dataBean.getCover().getDetail())
-                    .priority(Priority.HIGH)
+                    .priority(Priority.LOW)
 //                    .fitCenter()
                     .centerCrop()
-                    .into(((MHolder0) holder).itemVideoImg);
+                    .into(((MHolder0) holder).itemVideoImg)
+            ;
+
+            if (listener != null) {
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onClick(holder.itemView, position);
+                    }
+                });
+            }
+
         } else if (holder instanceof MHolder1) {
             ((MHolder1) holder).textView.setText(dataBean.getText());
         }
@@ -135,6 +146,16 @@ public class VideoDailyAdapter extends RecyclerView.Adapter {
             linearLayout.addView(textView);
 
         }
+    }
+
+    private onItemCicklistener listener;
+
+    public void setlistener(onItemCicklistener listener) {
+        this.listener = listener;
+    }
+
+    public interface onItemCicklistener {
+        void onClick(View view, int position);
     }
 
 
