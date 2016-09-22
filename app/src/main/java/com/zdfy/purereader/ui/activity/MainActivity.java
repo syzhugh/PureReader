@@ -104,11 +104,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        initData();
-    }
+//    @Override
+//    protected void onRestart() {
+//        super.onRestart();
+//        initData();
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
