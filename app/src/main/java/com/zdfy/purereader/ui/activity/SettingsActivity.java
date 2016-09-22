@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.constant.Constant;
 import com.zdfy.purereader.utils.DataCleanManager;
