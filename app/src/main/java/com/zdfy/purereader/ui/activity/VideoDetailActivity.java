@@ -1,5 +1,6 @@
 package com.zdfy.purereader.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -115,7 +116,12 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.activity_video_detail_play:
+                Intent intent = new Intent(this, VideoPlayActivity.class);
 
+                intent.putExtra(VideoPlayActivity.FILENAME, itemListBean.getData().getTitle());
+                intent.putExtra(VideoPlayActivity.PLAYURI, itemListBean.getData().getPlayUrl());
+
+                this.startActivity(intent);
                 break;
             case R.id.activity_video_detail_addfav:
                 Addfav.setSelected(true);
