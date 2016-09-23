@@ -123,6 +123,11 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
             getWindow().setNavigationBarColor(Color.TRANSPARENT);
         }
         init();
+
+
+
+
+
     }
 
     private void init() {
