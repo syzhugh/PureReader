@@ -28,7 +28,7 @@
             android:id="@+id/video_play_progressbar"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="50dp"
-            android:layout_height="50dp" />
+            android:layout_height="match_parent" />
 
         <TextView
             android:id="@+id/video_play_download_rate"
