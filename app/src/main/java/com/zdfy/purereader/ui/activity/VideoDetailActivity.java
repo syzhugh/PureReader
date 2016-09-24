@@ -1,6 +1,5 @@
 package com.zdfy.purereader.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,19 +17,15 @@ import com.zdfy.purereader.domain.VideoInfo;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 
 public class VideoDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     @Bind(R.id.activity_video_detail_toolbar)
     Toolbar Toolbar;
-    @Bind(R.id.activity_video_detail_cover)
-
-    ImageView Cover;
-    @Bind(R.id.activity_video_detail_play)
-    ImageView Play;
     @Bind(R.id.activity_video_detail_blurred)
-
     ImageView Blurred;
     @Bind(R.id.activity_video_detail_title)
     TextView Title;
@@ -42,6 +37,9 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
     TextView Addfav;
     @Bind(R.id.activity_video_detail_addcache)
     TextView Addcache;
+
+    @Bind(R.id.activity_video_detail_toplay)
+    JCVideoPlayerStandard toplay;
 
     private RequestManager picManager;
     private Priority priority = Priority.NORMAL;
@@ -56,24 +54,18 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
         ButterKnife.bind(this);
         picManager = Glide.with(this);
 
-        init();
+        initToolbar();
 
         initData();
 
         initEvent();
+
     }
 
-    private void init() {
-        Toolbar.setTitle("视频阅读");
-        setSupportActionBar(Toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
 
     private void initEvent() {
         Addcache.setOnClickListener(this);
         Addfav.setOnClickListener(this);
-        Play.setOnClickListener(this);
     }
 
     private void initData() {
@@ -82,8 +74,8 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
         /*picture*/
         String detail = itemListBean.getData().getCover().getDetail();
         String blurred = itemListBean.getData().getCover().getBlurred();
-        setPic(detail, Cover);
         setPic(blurred, Blurred);
+
 
         /*content*/
         String title = itemListBean.getData().getTitle();
@@ -93,6 +85,12 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
         setTxt(title, Title);
         setTxt(category + " / " + (duration / 60) + ":" + (duration % 60), Type);
         setTxt(description, Description);
+
+        /*video*/
+        String url = itemListBean.getData().getPlayUrl();
+        toplay.setUp(url, JCVideoPlayer.SCREEN_LAYOUT_LIST, ""
+        );
+        setPic(detail, toplay.thumbImageView);
 
         /*action*/
         int collectionNum = itemListBean.getData().getConsumption().getCollectionCount();
@@ -115,16 +113,15 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.activity_video_detail_play:
-                Intent intent = new Intent(this, VideoPlayActivity.class);
-
-                intent.putExtra(VideoPlayActivity.FILENAME, itemListBean.getData().getTitle());
-                intent.putExtra(VideoPlayActivity.PLAYURI, itemListBean.getData().getPlayUrl());
-
-                this.startActivity(intent);
-                break;
             case R.id.activity_video_detail_addfav:
-                Addfav.setSelected(true);
+
+                if (Addfav.isSelected()) {
+                    Addfav.setSelected(false);
+                    /*取消收藏操作*/
+                } else {
+                    Addfav.setSelected(true);
+                    /*收藏操作*/
+                }
                 break;
             case R.id.activity_video_detail_addcache:
                 break;
@@ -133,6 +130,14 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
 
 
     /*-------------toolbar_menu--------------*/
+
+    private void initToolbar() {
+        Toolbar.setTitle("视频阅读");
+        setSupportActionBar(Toolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);

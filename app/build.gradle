@@ -41,5 +41,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile 'za.co.riggaroo:materialhelptutorial:1.0.1'
-    compile project(':vitamio')
+    compile 'fm.jiecao:jiecaovideoplayer:4.6.5'
 }

@@ -22,6 +22,8 @@ import com.zdfy.purereader.constant.Constant;
 import com.zdfy.purereader.domain.VideoCategoryInfo;
 import com.zdfy.purereader.domain.VideoInfo;
 import com.zdfy.purereader.ui.activity.VideoDetailActivity;
+import com.zdfy.purereader.ui.activity.VideoFindDetailActivity;
+import com.zdfy.purereader.ui.view.DividerItemDecoration;
 import com.zdfy.purereader.utils.HttpUtils;
 
 import java.util.ArrayList;
@@ -73,7 +75,6 @@ public class VFindFragment extends Fragment implements HttpUtils.CallBack, Video
 
         recyclerview.setLayoutManager(manager);
         recyclerview.setAdapter(adapter);
-        recyclerview.setPadding(10, 0, 10, 0);
         recyclerview.setHasFixedSize(true);
 
     }
@@ -101,6 +102,8 @@ public class VFindFragment extends Fragment implements HttpUtils.CallBack, Video
 
     @Override
     public void onClick(View view, int position) {
-
+        Intent intent = new Intent(getActivity(), VideoFindDetailActivity.class);
+        intent.putExtra(VideoFindDetailActivity.NAME, list.get(position).getName());
+        getActivity().startActivity(intent);
     }
 }
