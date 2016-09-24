@@ -24,6 +24,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 
 public class VideoFindDetailActivity extends AppCompatActivity implements HttpUtils.CallBack {
 
@@ -40,6 +41,8 @@ public class VideoFindDetailActivity extends AppCompatActivity implements HttpUt
 
     private List<VideoFindInfo.ItemListBean> list;
     private VideoFindDetailAdapter adapter;
+    private LinearLayoutManager manager;
+    private RecyclerView.OnScrollListener mListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,33 +61,14 @@ public class VideoFindDetailActivity extends AppCompatActivity implements HttpUt
         getData();
         adapter = new VideoFindDetailAdapter(this, list);
 
-        LinearLayoutManager manager = new LinearLayoutManager(
+        manager = new LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false);
         recyclerview.setLayoutManager(manager);
         recyclerview.setAdapter(adapter);
         recyclerview.setHasFixedSize(true);
-        recyclerview.setBackgroundColor(Color.BLUE);
+        recyclerview.addOnScrollListener(listener);
 
 
-        recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-                LinearLayoutManager getManager = (LinearLayoutManager) layoutManager;
-                Log.i("info", "VideoFindDetailActivity:onScrollStateChanged----------------------");
-
-                Log.i("info", "findFirstVisible:" + getManager.findFirstVisibleItemPosition());
-                Log.i("info", "findFirstCompletelyVisible:" + getManager.findFirstCompletelyVisibleItemPosition());
-                Log.i("info", "findLastVisible:" + getManager.findLastVisibleItemPosition());
-                Log.i("info", "findLastCompletelyVisible:" + getManager.findLastCompletelyVisibleItemPosition());
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
-        });
     }
 
     private Handler handler = new Handler();
@@ -99,15 +83,18 @@ public class VideoFindDetailActivity extends AppCompatActivity implements HttpUt
         list.addAll(videoFind.getItemList());
 
         Log.i("info", "--" + list.size());
-//        adapter.notifyItemInserted(adapter.getItemCount());
 
+        adapter.notifyItemInserted(adapter.getItemCount());
+//        recyclerview.scrollToPosition(0);
+//        VideoFindDetailAdapter.ViewHolder holder = (VideoFindDetailAdapter.ViewHolder) recyclerview.findViewHolderForAdapterPosition(0);
+//        holder.getShade().setAlpha(0f);
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyDataSetChanged();
-            }
-        });
+//        handler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                adapter.notifyDataSetChanged();
+//            }
+//        });
     }
 
     private void getData() {
@@ -118,6 +105,81 @@ public class VideoFindDetailActivity extends AppCompatActivity implements HttpUt
             HttpUtils.doPostAsyn(Constant.VIDEO_FIND_DETAIL, param, this);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /*-------------recyclerview 滑动处理--------------*/
+
+    private MOnScrollListener listener = new MOnScrollListener();
+
+    private class MOnScrollListener extends RecyclerView.OnScrollListener {
+
+        private int position;
+        private VideoFindDetailAdapter.ViewHolder holder;
+        private VideoFindDetailAdapter.ViewHolder lastholder;
+
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            switch (newState) {
+                case RecyclerView.SCROLL_STATE_IDLE:
+
+                    if (lastholder != null) {
+                        lastholder.getToplay().changeUiToPauseShow();
+                        int addProgress = lastholder.getToplay().progressBar.getProgress();
+                        lastholder.setVideoProgress(addProgress);
+                    }
+
+                    if (lastholder == holder) {
+                        recyclerview.scrollToPosition(position);
+                        return;
+                    }
+
+                    recyclerview.scrollToPosition(position);
+                    JCVideoPlayerStandard toplay = holder.getToplay();
+                    int progress = holder.getVideoProgress();
+
+                    if (progress == 0) {
+                        toplay.startButton.performClick();
+                    } else {
+                        toplay.progressBar.setProgress(progress);
+                        toplay.startButton.performClick();
+                    }
+                    lastholder = holder;
+                    break;
+                case RecyclerView.SCROLL_STATE_DRAGGING:
+
+                    position = manager.findFirstCompletelyVisibleItemPosition();
+                    if (position == -1)
+                        return;
+                    holder = getHolder(position);
+                    holder.getShade().setAlpha(0f);
+
+                    break;
+                case RecyclerView.SCROLL_STATE_SETTLING:
+                    break;
+            }
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int current = manager.findFirstCompletelyVisibleItemPosition();
+            if (current == position || current == -1)
+                return;
+            else {
+                holder.getShade().setAlpha(1f);
+                position = current;
+                holder = getHolder(position);
+                holder.getShade().setAlpha(0f);
+            }
+
+        }
+
+
+        private VideoFindDetailAdapter.ViewHolder getHolder(int position) {
+            return (VideoFindDetailAdapter.ViewHolder) recyclerview.findViewHolderForAdapterPosition(position);
         }
     }
 
