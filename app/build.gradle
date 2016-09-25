@@ -8,8 +8,8 @@ android {
         applicationId "com.zdfy.purereader"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 4
-        versionName "0.4"
+        versionCode 1
+        versionName "1.0"
     }
     buildTypes {
         release {
@@ -44,4 +44,5 @@ dependencies {
     compile 'com.github.kayvannj:PermissionUtils:1.0.2@aar'
     compile 'im.fir:fir-sdk:latest.integration@aar'
     compile project(':vitamio')
+    compile 'fm.jiecao:jiecaovideoplayer:4.6.5'
 }
