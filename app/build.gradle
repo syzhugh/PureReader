@@ -43,6 +43,5 @@ dependencies {
     compile 'za.co.riggaroo:materialhelptutorial:1.0.1'
     compile 'com.github.kayvannj:PermissionUtils:1.0.2@aar'
     compile 'im.fir:fir-sdk:latest.integration@aar'
-    compile project(':vitamio')
     compile 'fm.jiecao:jiecaovideoplayer:4.6.5'
 }
