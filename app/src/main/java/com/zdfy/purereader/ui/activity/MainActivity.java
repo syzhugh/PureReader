@@ -19,12 +19,15 @@ import com.zdfy.purereader.constant.Constant;
 import com.zdfy.purereader.ui.fragment.DouBanFragment;
 import com.zdfy.purereader.ui.fragment.NewsFragment;
 import com.zdfy.purereader.ui.fragment.PicFragment;
-import com.zdfy.purereader.ui.fragment.video.VideoFragment;
 import com.zdfy.purereader.ui.fragment.ZhiHuFragment;
+import com.zdfy.purereader.ui.fragment.video.VideoFragment;
 import com.zdfy.purereader.ui.qrcode.activity.MCaptureActivity;
 import com.zdfy.purereader.utils.SPUtils;
 import com.zdfy.purereader.utils.UiUtils;
 import com.zdfy.purereader.utils.UpdateUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -127,6 +130,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
+    List<Integer> mIntegers = new ArrayList<>();
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -142,15 +147,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             setToolBarTitle(UiUtils.getString(R.string.ZhiHuJingXuan));
             fragmentTransaction.show(mZhiHuFragment);
+            mIntegers.add(id);
         } else if (id == R.id.nav_douban) {
             if (mDouBanFragment == null) {
                 mDouBanFragment = new DouBanFragment();
                 fragmentTransaction.add(R.id.fl_container, mDouBanFragment);
             }
-            System.out.println("loadData----DoubanFragment" + System.currentTimeMillis());
-//            mDouBanFragment.loadData();
             setToolBarTitle(UiUtils.getString(R.string.DouBanYiKe));
             fragmentTransaction.show(mDouBanFragment);
+            mIntegers.add(id);
         } else if (id == R.id.nav_news) {
             if (mNewsFragment == null) {
                 mNewsFragment = new NewsFragment();
@@ -159,15 +164,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             setToolBarTitle(UiUtils.getString(R.string.XinWenYueDu));
             fragmentTransaction.show(mNewsFragment);
+            mIntegers.add(id);
         } else if (id == R.id.nav_pic) {
             if (mPicFragment == null) {
                 mPicFragment = new PicFragment();
                 fragmentTransaction.add(R.id.fl_container, mPicFragment);
             }
-
             setToolBarTitle(UiUtils.getString(R.string.TuPianYueDu));
             fragmentTransaction.show(mPicFragment);
-
+            mIntegers.add(id);
         } else if (id == R.id.nav_video) {
             if (mVideoFragment == null) {
                 mVideoFragment = new VideoFragment();
@@ -175,9 +180,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             setToolBarTitle(UiUtils.getString(R.string.ShiPingYueDu));
             fragmentTransaction.show(mVideoFragment);
+            mIntegers.add(id);
+        }
 
-        } else if (id == R.id.nav_seetings) {
-            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+        if (id == R.id.nav_seetings) {
+          startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         }
         fragmentTransaction.commit();
         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -200,5 +207,55 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (mVideoFragment != null) {
             transaction.hide(mVideoFragment);
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        int id=mIntegers.size()>0?mIntegers.get(mIntegers.size() - 1):0;
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        hideFragments(fragmentTransaction);
+        if (id == R.id.nav_zhihu) {
+            if (mZhiHuFragment == null) {
+                mZhiHuFragment = new ZhiHuFragment();
+                fragmentTransaction.add(R.id.fl_container, mZhiHuFragment);
+            }
+            setToolBarTitle(UiUtils.getString(R.string.ZhiHuJingXuan));
+            fragmentTransaction.show(mZhiHuFragment);
+            mNavView.setCheckedItem(R.id.nav_zhihu);
+        } else if (id == R.id.nav_douban) {
+            if (mDouBanFragment == null) {
+                mDouBanFragment = new DouBanFragment();
+                fragmentTransaction.add(R.id.fl_container, mDouBanFragment);
+            }
+            setToolBarTitle(UiUtils.getString(R.string.DouBanYiKe));
+            fragmentTransaction.show(mDouBanFragment);
+            mNavView.setCheckedItem(R.id.nav_douban);
+        } else if (id == R.id.nav_news) {
+            if (mNewsFragment == null) {
+                mNewsFragment = new NewsFragment();
+                fragmentTransaction.add(R.id.fl_container, mNewsFragment);
+            }
+            setToolBarTitle(UiUtils.getString(R.string.XinWenYueDu));
+            fragmentTransaction.show(mNewsFragment);
+            mNavView.setCheckedItem(R.id.nav_news);
+        } else if (id == R.id.nav_pic) {
+            if (mPicFragment == null) {
+                mPicFragment = new PicFragment();
+                fragmentTransaction.add(R.id.fl_container, mPicFragment);
+            }
+            setToolBarTitle(UiUtils.getString(R.string.TuPianYueDu));
+            fragmentTransaction.show(mPicFragment);
+            mNavView.setCheckedItem(R.id.nav_pic);
+        } else if (id == R.id.nav_video) {
+            if (mVideoFragment == null) {
+                mVideoFragment = new VideoFragment();
+                fragmentTransaction.add(R.id.fl_container, mVideoFragment);
+            }
+            setToolBarTitle(UiUtils.getString(R.string.ShiPingYueDu));
+            fragmentTransaction.show(mVideoFragment);
+            mNavView.setCheckedItem(R.id.nav_video);
+        }
+        fragmentTransaction.commitAllowingStateLoss();
     }
 }

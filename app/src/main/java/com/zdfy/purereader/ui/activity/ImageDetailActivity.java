@@ -8,9 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -57,28 +55,19 @@ public class ImageDetailActivity extends AppCompatActivity {
     //是否已经保存过文件
     private File isHasSavedFile;
     private boolean isClickShare = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        picUrl = getIntent().getStringExtra(Constant.PIC_URL);
-        picName = getIntent().getStringExtra(Constant.PIC_CREATE);
+        initData();
         setContentView(R.layout.activity_image_detail);
         ButterKnife.bind(this);
-        mStoragePermissionRequest = PermissionUtil.with(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE).onAllGranted(
-                new Func() {
-                    @Override
-                    protected void call() {
-                        doOnPermissionGranted();
-                    }
-                }).onAnyDenied(
-                new Func() {
-                    @Override
-                    protected void call() {
-                        doOnPermissionDenied();
-                    }
-                }).ask(REQUEST_CODE_STORAGE);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initPermissions();
+        initToolbar();
+        initEvent();
+    }
+
+    private void initEvent() {
         mIvDetail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -102,6 +91,32 @@ public class ImageDetailActivity extends AppCompatActivity {
         });
     }
 
+    private void initData() {
+        picUrl = getIntent().getStringExtra(Constant.PIC_URL);
+        picName = getIntent().getStringExtra(Constant.PIC_CREATE);
+    }
+
+    private void initToolbar() {
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void initPermissions() {
+        mStoragePermissionRequest = PermissionUtil.with(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE).onAllGranted(
+                new Func() {
+                    @Override
+                    protected void call() {
+                        doOnPermissionGranted();
+                    }
+                }).onAnyDenied(
+                new Func() {
+                    @Override
+                    protected void call() {
+                        doOnPermissionDenied();
+                    }
+                }).ask(REQUEST_CODE_STORAGE);
+    }
+
     private void initFiles() {
         try {
             externalStorageDirectory = Environment.getExternalStorageDirectory();
@@ -117,16 +132,8 @@ public class ImageDetailActivity extends AppCompatActivity {
     }
 
     private void doOnPermissionDenied() {
-        Snackbar.make(mCoordinatorLayout, "读取存储空间是必须的", Snackbar.LENGTH_INDEFINITE).setAction("前去设置", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                intent.setData(Uri.parse(PACKAGE_URL_SCHEME + getPackageName()));
-                startActivity(intent);
-            }
-        }).show();
+        UiUtils.ShowSnackBarPermission(mCoordinatorLayout, ImageDetailActivity.this);
     }
-
     @Override
     protected void onRestart() {
         super.onRestart();

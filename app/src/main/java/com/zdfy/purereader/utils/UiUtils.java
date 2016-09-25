@@ -1,9 +1,13 @@
 package com.zdfy.purereader.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Process;
+import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import com.zdfy.purereader.application.BaseApplication;
@@ -120,5 +124,15 @@ public class UiUtils {
             //如果是子线程,借助handler使其运行在主线程
             getHandler().post(r);
         }
+    }
+    public static void ShowSnackBarPermission(View view, final Context mContext){
+        Snackbar.make(view, "读取存储空间是必须的", Snackbar.LENGTH_INDEFINITE).setAction("前去设置", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.setData(Uri.parse("package:" + mContext.getPackageName()));
+                mContext.startActivity(intent);
+            }
+        }).show();
     }
 }

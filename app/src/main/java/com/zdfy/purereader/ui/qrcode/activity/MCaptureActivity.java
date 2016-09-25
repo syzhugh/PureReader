@@ -1,6 +1,7 @@
 package com.zdfy.purereader.ui.qrcode.activity;
 
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,16 +21,14 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-
+import com.github.kayvannj.permission_utils.Func;
+import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.PropertyValuesHolder;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
-
-
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.ui.qrcode.camera.CameraManager;
 import com.zdfy.purereader.ui.qrcode.decode.DecodeUtils;
@@ -37,12 +36,13 @@ import com.zdfy.purereader.ui.qrcode.utils.BeepManager;
 import com.zdfy.purereader.ui.qrcode.utils.CaptureActivityHandler;
 import com.zdfy.purereader.ui.qrcode.utils.CommonUtils;
 import com.zdfy.purereader.ui.qrcode.utils.InactivityTimer;
+import com.zdfy.purereader.utils.UiUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import butterknife.ButterKnife;
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -50,6 +50,8 @@ import butterknife.OnClick;
  */
 
 public class MCaptureActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback {
+
+    private static final int REQUEST_CODE_CAMERA = 0;
 
     /*view*/
     private RelativeLayout container;
@@ -101,6 +103,7 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
 
     /*switch*/
     private boolean hasSurface;
+    private PermissionUtil.PermissionRequestObject mCameraPermissionRequest;
 
 
     @Override
@@ -109,25 +112,46 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         container = (RelativeLayout) getLayoutInflater().inflate(R.layout.activity_qrcodecapture, null);
         setContentView(container);
         ButterKnife.bind(this);
-        if (Build.VERSION.SDK_INT>=21){
-            View decorView = getWindow().getDecorView();
-            //半透明状态栏设置
-//            int options = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        initPermissions();
+        initFullScreen();
+        init();
+    }
 
-            int options=View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    |View.SYSTEM_UI_FLAG_FULLSCREEN
+    /**
+     * 全屏扫码
+     */
+    private void initFullScreen() {
+        if (Build.VERSION.SDK_INT >= 21) {
+            View decorView = getWindow().getDecorView();
+            int options = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
             decorView.setSystemUiVisibility(options);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
             getWindow().setNavigationBarColor(Color.TRANSPARENT);
         }
-        init();
+    }
 
+    /**
+     * 权限检测
+     */
+    private void initPermissions() {
+        mCameraPermissionRequest = PermissionUtil.with(this).request(Manifest.permission.CAMERA).onAllGranted(
+                new Func() {
+                    @Override
+                    protected void call() {
+                    }
+                }).onAnyDenied(
+                new Func() {
+                    @Override
+                    protected void call() {
+                        doOnPermissionDenied();
+                    }
+                }).ask(REQUEST_CODE_CAMERA);
+    }
 
-
-
-
+    private void doOnPermissionDenied() {
+        UiUtils.ShowSnackBarPermission(container, MCaptureActivity.this);
     }
 
     private void init() {
@@ -277,8 +301,9 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
 
     private void cameraFailed() {
         capShadeError.setVisibility(View.VISIBLE);
-        Toast.makeText(MCaptureActivity.this, "开启失败", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(MCaptureActivity.this, "开启失败", Toast.LENGTH_SHORT).show();
     }
+    
 
 
 
@@ -454,6 +479,14 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (mCameraPermissionRequest != null) {
+            mCameraPermissionRequest.ask(REQUEST_CODE_CAMERA);
+        }
+    }
+
+    @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         initCamera(holder);
     }
@@ -490,5 +523,11 @@ public class MCaptureActivity extends AppCompatActivity implements View.OnClickL
         return capActHandler;
     }
 
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (mCameraPermissionRequest != null) {
+            mCameraPermissionRequest.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }
