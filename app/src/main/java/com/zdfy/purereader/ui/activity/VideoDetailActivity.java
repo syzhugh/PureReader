@@ -161,4 +161,19 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
         }
         return super.onOptionsItemSelected(item);
     }
+
+    /*-------------结束播放进程--------------*/
+    @Override
+    public void onBackPressed() {
+        if (JCVideoPlayer.backPress()) {
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        JCVideoPlayer.releaseAllVideos();
+    }
 }

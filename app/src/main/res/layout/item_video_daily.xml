@@ -11,8 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/video_shade"
-        >
+        android:background="@drawable/video_shade">
 
         <com.zdfy.purereader.ui.view.VideoCenterTextView
             android:id="@+id/item_videodaily_title"
