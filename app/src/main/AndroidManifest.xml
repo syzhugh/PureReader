@@ -59,12 +59,10 @@
         <activity
             android:name=".ui.activity.ZhiHuDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".ui.activity.VideoDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
-
-
         <activity
             android:name=".ui.activity.VideoFindDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
