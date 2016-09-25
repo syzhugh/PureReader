@@ -24,6 +24,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 
 public class VideoFindDetailActivity extends AppCompatActivity implements HttpUtils.CallBack {
@@ -49,6 +50,9 @@ public class VideoFindDetailActivity extends AppCompatActivity implements HttpUt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_find_detail);
         ButterKnife.bind(this);
+
+        paramCategory = getIntent().getStringExtra(NAME);
+        paramStrategy = "date";
         initToolbar();
 
         init();
@@ -98,8 +102,7 @@ public class VideoFindDetailActivity extends AppCompatActivity implements HttpUt
     }
 
     private void getData() {
-        paramCategory = getIntent().getStringExtra(NAME);
-        paramStrategy = "date";
+
         String param = String.format(Constant.VIDEO_FIND_DETAIL_PARAM, URLEncoder.encode(paramCategory), paramStrategy);
         try {
             HttpUtils.doPostAsyn(Constant.VIDEO_FIND_DETAIL, param, this);
@@ -125,27 +128,30 @@ public class VideoFindDetailActivity extends AppCompatActivity implements HttpUt
             switch (newState) {
                 case RecyclerView.SCROLL_STATE_IDLE:
 
-                    if (lastholder != null) {
-                        lastholder.getToplay().changeUiToPauseShow();
-                        int addProgress = lastholder.getToplay().progressBar.getProgress();
-                        lastholder.setVideoProgress(addProgress);
-                    }
-
                     if (lastholder == holder) {
-                        recyclerview.scrollToPosition(position);
+                        recyclerview.smoothScrollToPosition(position);
                         return;
                     }
 
-                    recyclerview.scrollToPosition(position);
-                    JCVideoPlayerStandard toplay = holder.getToplay();
-                    int progress = holder.getVideoProgress();
-
-                    if (progress == 0) {
-                        toplay.startButton.performClick();
-                    } else {
-                        toplay.progressBar.setProgress(progress);
-                        toplay.startButton.performClick();
+                    if (lastholder != null) {
+                        lastholder.getToplay().release();
+//                        int addProgress = lastholder.getToplay().progressBar.getProgress();
+//                        lastholder.setVideoProgress(addProgress);
                     }
+
+                    recyclerview.smoothScrollToPosition(position);
+                    JCVideoPlayerStandard toplay = holder.getToplay();
+
+//                    int progress = holder.getVideoProgress();
+
+//                    if (progress == 0) {
+//                        toplay.startButton.performClick();
+//                    } else {
+////                        toplay.progressBar.setProgress(progress);
+//                        toplay.startButton.performClick();
+//                    }
+
+                    toplay.startButton.performClick();
                     lastholder = holder;
                     break;
                 case RecyclerView.SCROLL_STATE_DRAGGING:
@@ -186,7 +192,7 @@ public class VideoFindDetailActivity extends AppCompatActivity implements HttpUt
     /*-------------toolbar_menu--------------*/
 
     private void initToolbar() {
-        toolbar.setTitle("视频分类");
+        toolbar.setTitle(paramCategory);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -216,5 +222,20 @@ public class VideoFindDetailActivity extends AppCompatActivity implements HttpUt
         return super.onOptionsItemSelected(item);
     }
 
+
+    /*-------------结束播放进程--------------*/
+    @Override
+    public void onBackPressed() {
+        if (JCVideoPlayer.backPress()) {
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        JCVideoPlayer.releaseAllVideos();
+    }
 
 }

@@ -17,6 +17,7 @@ import com.bumptech.glide.Priority;
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.domain.VideoInfo;
 import com.zdfy.purereader.domain.VideoInfo.IssueListBean.ItemListBean;
+import com.zdfy.purereader.utils.UiUtils;
 
 import java.util.List;
 
@@ -39,8 +40,8 @@ public class VideoDailyAdapter extends RecyclerView.Adapter {
         this.list = list;
     }
 
-    private enum VideType {
-        Video, Title;
+    private enum VideoType {
+        Video, Title, Foot;
     }
 
     @Override
@@ -58,14 +59,19 @@ public class VideoDailyAdapter extends RecyclerView.Adapter {
                 view.setLayoutParams(layoutParams);
                 holder = new MHolder1(view);
                 break;
+            case 2:
+                view = inflater.inflate(R.layout.item_recycler_footerview, parent, false);
+                holder = new FootViewHolder(view);
+                break;
         }
         return holder;
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        ItemListBean.DataBean dataBean = list.get(position).getData();
+
         if (holder instanceof MHolder0) {
+            ItemListBean.DataBean dataBean = list.get(position).getData();
             ((MHolder0) holder).itemVideoTitle.setText(dataBean.getTitle());
             int duration = dataBean.getDuration();
             ((MHolder0) holder).itemVideoType.setText(
@@ -75,7 +81,6 @@ public class VideoDailyAdapter extends RecyclerView.Adapter {
             Glide.with(context)
                     .load(dataBean.getCover().getDetail())
                     .priority(Priority.LOW)
-//                    .fitCenter()
                     .centerCrop()
                     .into(((MHolder0) holder).itemVideoImg)
             ;
@@ -90,14 +95,17 @@ public class VideoDailyAdapter extends RecyclerView.Adapter {
             }
 
         } else if (holder instanceof MHolder1) {
+            ItemListBean.DataBean dataBean = list.get(position).getData();
             ((MHolder1) holder).textView.setText(dataBean.getText());
         }
     }
 
     @Override
     public int getItemCount() {
+        if (list == null)
+            return 0;
 
-        return list.size();
+        return list.size() == 0 ? list.size() : (list.size() + 1);
     }
 
 
@@ -105,12 +113,15 @@ public class VideoDailyAdapter extends RecyclerView.Adapter {
     public int getItemViewType(int position) {
         int type = 0;
 
+        if (position + 1 == getItemCount())
+            return VideoType.Foot.ordinal();
+
         switch (list.get(position).getType()) {
             case "video":
-                type = VideType.Video.ordinal();
+                type = VideoType.Video.ordinal();
                 break;
             case "textHeader":
-                type = VideType.Title.ordinal();
+                type = VideoType.Title.ordinal();
                 break;
         }
 
@@ -145,6 +156,12 @@ public class VideoDailyAdapter extends RecyclerView.Adapter {
 
             linearLayout.addView(textView);
 
+        }
+    }
+
+    class FootViewHolder extends RecyclerView.ViewHolder {
+        public FootViewHolder(View footer_view) {
+            super(footer_view);
         }
     }
 

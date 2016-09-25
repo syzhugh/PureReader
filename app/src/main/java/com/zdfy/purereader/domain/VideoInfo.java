@@ -7,7 +7,7 @@ import java.util.List;
  * Created by Yaozong on 2016/9/20.
  */
 
-public class VideoInfo {
+public class VideoInfo implements Serializable{
 
 
     private String newestIssueType;
@@ -48,7 +48,7 @@ public class VideoInfo {
         this.issueList = issueList;
     }
 
-    public static class IssueListBean {
+    public static class IssueListBean implements Serializable{
         private int count;
         private long date;
         private long publishTime;
@@ -406,7 +406,7 @@ public class VideoInfo {
                     this.tags = tags;
                 }
 
-                public static class AuthorBean {
+                public static class AuthorBean implements Serializable{
                     private String description;
                     private String icon;
                     private int id;

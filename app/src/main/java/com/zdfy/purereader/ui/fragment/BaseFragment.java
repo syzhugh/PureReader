@@ -28,15 +28,15 @@ import java.util.List;
 /**
  * Created by ZhangPeng on 2016/9/5.
  */
-public abstract class BaseFragment extends Fragment {
-    
+public abstract class  BaseFragment extends Fragment {
+
     LoadingPage mLoadingPage;
-    
+
     //是否在加载
     protected boolean isLoading;
     //刷新的类型,默认下拉刷新
     protected int addDatasType = 1;
-    
+
     protected Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -128,7 +128,7 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 初始化UI
      */
-    private void initUI() {
+    protected void initUI() {
         mParentlayoutManager=new LinearLayoutManager(UiUtils.getContext());
         setLayoutManager();
         //设置item之间的间隔
@@ -145,7 +145,8 @@ public abstract class BaseFragment extends Fragment {
         RefreshDatas();
     }
     protected abstract void setLayoutManager();
-    private void initEvents() {
+
+    protected void initEvents() {
         mParentSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
