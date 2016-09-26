@@ -46,4 +46,6 @@
     <string name="video_bottom_daily">每日精选</string>
     <string name="video_bottom_findmore">发现更多</string>
     <string name="video_bottom_fav">我的收藏</string>
+    <!--更新日志-->
+    <string name="UPDATE_DES">## 删去了新闻api(PS:考虑换个有价值的api)\n## 修复了后台切回页面出现的重叠</string>
 </resources>

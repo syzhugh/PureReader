@@ -45,6 +45,7 @@ public class Constant {
     //发现更多详情接口
     public static final String VIDEO_FIND_DETAIL = "http://baobab.wandoujia.com/api/v3/videos";
     public static final String VIDEO_FIND_DETAIL_PARAM = "categoryName=%s&strategy=%s&udid=26868b32e808498db32fd51fb422d00175e179df&vc=83";
+    public static final String SAVED_INDEX = "saved_index";
 
 //    http://baobab.wandoujia.com/api/v3/videos?categoryName=%E6%90%9E%E7%AC%91&strategy=date&udid=26868b32e808498db32fd51fb422d00175e179df&vc=83
 

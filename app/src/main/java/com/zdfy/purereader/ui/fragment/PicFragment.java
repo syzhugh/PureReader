@@ -6,6 +6,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
+
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.adapter.ImgAdapter;
 import com.zdfy.purereader.constant.GankApis;
@@ -50,8 +52,14 @@ public class PicFragment extends BaseFragment {
         }
         if (addDatasType == 2) {
             int position = imgLists.size();
-            imgLists.addAll((List<ResultsEntity>) msg.obj);
-            mAdapter.notifyItemRangeInserted(position, ((List<ResultsEntity>) msg.obj).size());
+            
+            if (msg.obj==null||((List<ResultsEntity>) msg.obj).size()==0){
+                Toast.makeText(UiUtils.getContext(), "牛逼,到底了已经!", Toast.LENGTH_SHORT).show();
+                return;
+            }else{
+                imgLists.addAll((List<ResultsEntity>) msg.obj);
+                mAdapter.notifyItemRangeInserted(position, ((List<ResultsEntity>) msg.obj).size());
+            }
         }
         if (mParentSwipeRefreshLayout.isRefreshing()) {
             mParentSwipeRefreshLayout.setRefreshing(false);

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,7 +18,6 @@ import android.view.MenuItem;
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.constant.Constant;
 import com.zdfy.purereader.ui.fragment.DouBanFragment;
-import com.zdfy.purereader.ui.fragment.NewsFragment;
 import com.zdfy.purereader.ui.fragment.PicFragment;
 import com.zdfy.purereader.ui.fragment.ZhiHuFragment;
 import com.zdfy.purereader.ui.fragment.video.VideoFragment;
@@ -32,7 +32,10 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.zdfy.purereader.constant.Constant.SAVED_INDEX;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.nav_view)
@@ -41,10 +44,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout mDrawerLayout;
     private ZhiHuFragment mZhiHuFragment;
     private DouBanFragment mDouBanFragment;
-    private NewsFragment mNewsFragment;
+    //    private NewsFragment mNewsFragment;
     private PicFragment mPicFragment;
     private VideoFragment mVideoFragment;
     private Handler mHandler = new Handler();
+    private String[] TAG_FRAGMENTs = {"ZhiHuFragment", "DouBanFragment", "PicFragment", "VideoFragment"};
+    private int tempId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initViews();
+        /***************************修复Fragment重叠现象start*********************************/
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        int index = 0;
+        if (savedInstanceState != null) {
+            index = savedInstanceState.getInt(SAVED_INDEX, index);
+            mZhiHuFragment = (ZhiHuFragment) fragmentManager.findFragmentByTag(TAG_FRAGMENTs[0]);
+            mDouBanFragment = (DouBanFragment) fragmentManager.findFragmentByTag(TAG_FRAGMENTs[1]);
+            mPicFragment = (PicFragment) fragmentManager.findFragmentByTag(TAG_FRAGMENTs[2]);
+            mVideoFragment = (VideoFragment) fragmentManager.findFragmentByTag(TAG_FRAGMENTs[3]);
+            setSelect(index);
+        }
+      
+        /***************************修复Fragment重叠现象end*********************************/
         initData();
         if (((Boolean) SPUtils.get(MainActivity.this, Constant.AUTO_UPDATE, false))) {
             mHandler.postDelayed(new Runnable() {
@@ -61,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }, 5000);
         }
-
     }
 
     /**
@@ -71,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mZhiHuFragment = new ZhiHuFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.fl_container, mZhiHuFragment);
+        fragmentTransaction.add(R.id.fl_container, mZhiHuFragment, TAG_FRAGMENTs[0]);
         fragmentTransaction.commit();
 
         setToolBarTitle(UiUtils.getString(R.string.ZhiHuJingXuan));
@@ -105,12 +122,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-//    @Override
-//    protected void onRestart() {
-//        super.onRestart();
-//        initData();
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -135,60 +146,63 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
         int id = item.getItemId();
+        setSelect(id);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(SAVED_INDEX, tempId);
+        super.onSaveInstanceState(outState);
+    }
+    private void setSelect(int id) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         hideFragments(fragmentTransaction);
-//        mFlContainer.removeAllViews();
         if (id == R.id.nav_zhihu) {
             if (mZhiHuFragment == null) {
                 mZhiHuFragment = new ZhiHuFragment();
-                fragmentTransaction.add(R.id.fl_container, mZhiHuFragment);
+                fragmentTransaction.add(R.id.fl_container, mZhiHuFragment, TAG_FRAGMENTs[0]);
             }
             setToolBarTitle(UiUtils.getString(R.string.ZhiHuJingXuan));
             fragmentTransaction.show(mZhiHuFragment);
             mIntegers.add(id);
+            tempId = R.id.nav_zhihu;
         } else if (id == R.id.nav_douban) {
             if (mDouBanFragment == null) {
                 mDouBanFragment = new DouBanFragment();
-                fragmentTransaction.add(R.id.fl_container, mDouBanFragment);
+                fragmentTransaction.add(R.id.fl_container, mDouBanFragment, TAG_FRAGMENTs[1]);
             }
             setToolBarTitle(UiUtils.getString(R.string.DouBanYiKe));
             fragmentTransaction.show(mDouBanFragment);
             mIntegers.add(id);
-        } else if (id == R.id.nav_news) {
-            if (mNewsFragment == null) {
-                mNewsFragment = new NewsFragment();
-                fragmentTransaction.add(R.id.fl_container, mNewsFragment);
-            }
-
-            setToolBarTitle(UiUtils.getString(R.string.XinWenYueDu));
-            fragmentTransaction.show(mNewsFragment);
-            mIntegers.add(id);
+            tempId = R.id.nav_douban;
         } else if (id == R.id.nav_pic) {
             if (mPicFragment == null) {
                 mPicFragment = new PicFragment();
-                fragmentTransaction.add(R.id.fl_container, mPicFragment);
+                fragmentTransaction.add(R.id.fl_container, mPicFragment, TAG_FRAGMENTs[2]);
             }
             setToolBarTitle(UiUtils.getString(R.string.TuPianYueDu));
             fragmentTransaction.show(mPicFragment);
+
             mIntegers.add(id);
+            tempId = R.id.nav_pic;
         } else if (id == R.id.nav_video) {
             if (mVideoFragment == null) {
                 mVideoFragment = new VideoFragment();
-                fragmentTransaction.add(R.id.fl_container, mVideoFragment);
+                fragmentTransaction.add(R.id.fl_container, mVideoFragment, TAG_FRAGMENTs[3]);
             }
             setToolBarTitle(UiUtils.getString(R.string.ShiPingYueDu));
             fragmentTransaction.show(mVideoFragment);
             mIntegers.add(id);
+            tempId = R.id.nav_video;
         }
 
         if (id == R.id.nav_seetings) {
-          startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         }
         fragmentTransaction.commit();
-        mDrawerLayout.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     private void hideFragments(FragmentTransaction transaction) {
@@ -197,9 +211,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if (mDouBanFragment != null) {
             transaction.hide(mDouBanFragment);
-        }
-        if (mNewsFragment != null) {
-            transaction.hide(mNewsFragment);
         }
         if (mPicFragment != null) {
             transaction.hide(mPicFragment);
@@ -212,7 +223,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onRestart() {
         super.onRestart();
-        int id=mIntegers.size()>0?mIntegers.get(mIntegers.size() - 1):0;
+//        int id=tempId;
+        int id = mIntegers.size() > 0 ? mIntegers.get(mIntegers.size() - 1) : R.id.nav_zhihu;
+        System.out.println("onRestart~~~~~~~~~~"+id);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         hideFragments(fragmentTransaction);
         if (id == R.id.nav_zhihu) {
@@ -231,14 +244,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             setToolBarTitle(UiUtils.getString(R.string.DouBanYiKe));
             fragmentTransaction.show(mDouBanFragment);
             mNavView.setCheckedItem(R.id.nav_douban);
-        } else if (id == R.id.nav_news) {
-            if (mNewsFragment == null) {
-                mNewsFragment = new NewsFragment();
-                fragmentTransaction.add(R.id.fl_container, mNewsFragment);
-            }
-            setToolBarTitle(UiUtils.getString(R.string.XinWenYueDu));
-            fragmentTransaction.show(mNewsFragment);
-            mNavView.setCheckedItem(R.id.nav_news);
         } else if (id == R.id.nav_pic) {
             if (mPicFragment == null) {
                 mPicFragment = new PicFragment();

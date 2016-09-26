@@ -9,10 +9,10 @@
             android:id="@+id/nav_douban"
             android:icon="@drawable/douban"
             android:title="@string/DouBanYiKe"/>
-        <item
-            android:id="@+id/nav_news"
-            android:icon="@drawable/newsyuedu"
-            android:title="@string/XinWenYueDu"/>
+        <!--<item-->
+            <!--android:id="@+id/nav_news"-->
+            <!--android:icon="@drawable/newsyuedu"-->
+            <!--android:title="@string/XinWenYueDu"/>-->
         <item
             android:id="@+id/nav_pic"
             android:icon="@drawable/picread"

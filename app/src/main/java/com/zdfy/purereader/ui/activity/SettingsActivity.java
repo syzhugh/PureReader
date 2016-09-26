@@ -16,22 +16,16 @@ import com.zdfy.purereader.R;
 import com.zdfy.purereader.constant.Constant;
 import com.zdfy.purereader.utils.DataCleanManager;
 import com.zdfy.purereader.utils.SPUtils;
-import com.zdfy.purereader.utils.StringUtils;
 import com.zdfy.purereader.utils.ToastUtils;
 import com.zdfy.purereader.utils.UiUtils;
 import com.zdfy.purereader.utils.UpdateUtils;
 import com.zdfy.purereader.utils.VersionUtils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import im.fir.sdk.FIR;
-import im.fir.sdk.VersionCheckCallback;
 
 public class SettingsActivity extends AppCompatActivity {
     @Bind(R.id.toolbar)
@@ -83,25 +77,7 @@ public class SettingsActivity extends AppCompatActivity {
      * 初始化版本信息描述
      */
     private void initVersionDes() {
-        FIR.checkForUpdateInFIR(Constant.firToken, new VersionCheckCallback() {
-            @Override
-            public void onSuccess(String versionJson) {
-                try {
-                    JSONObject jo = new JSONObject(versionJson);
-                    final String changelog = jo.getString("changelog");
-                    UiUtils.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mTvDes.setText(StringUtils.isEmpty(changelog) ? "暂无" : changelog);
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.i("fir", "check from fir.im success! " + "\n" + versionJson);
-            }
-        });
-
+        mTvDes.setText(R.string.UPDATE_DES);
     }
 
     /**

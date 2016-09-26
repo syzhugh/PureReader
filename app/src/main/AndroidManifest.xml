@@ -69,19 +69,11 @@
             android:theme="@style/AppTheme.NoActionBar"
             >
         </activity>
-
-            android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ui.activity.VideoDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.activity.VideoPlayActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="sensorLandscape"
+            android:name=".ui.activity.VideoFindDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
-
     </application>
-
 </manifest>
