@@ -14,8 +14,9 @@ import java.util.List;
 public class NewsProtocol extends BaseProtocol<List<ContentlistEntity>> {
     @Override
     protected List<ContentlistEntity> parseData(String result) {
-
+        
         NewsInfo newsInfo = JSON.parseObject(result, NewsInfo.class);
+        
         if (newsInfo != null&&newsInfo.getShowapi_res_body()!=null&&newsInfo.getShowapi_res_body().getPagebean()!=null) {
             List<ContentlistEntity> mdatas = newsInfo.getShowapi_res_body().getPagebean().getContentlist();
             return mdatas;

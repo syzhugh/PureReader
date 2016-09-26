@@ -44,17 +44,12 @@ public abstract class  BaseFragment extends Fragment {
             super.handleMessage(msg);
         }
     };
+    
     private View successView;
     protected LinearLayoutManager mParentlayoutManager;
     protected RecyclerView mParentRecyclerView;
     protected SwipeRefreshLayout mParentSwipeRefreshLayout;
     protected BaseAdapter mAdapter;
-
-    /**
-     * 由子类去实现消息异步
-     * @param msg
-     */
-    protected abstract void handleMsgByChild(Message msg);
 
     @Nullable
     @Override
@@ -79,6 +74,12 @@ public abstract class  BaseFragment extends Fragment {
         loadData();
         return mLoadingPage;
     }
+
+    /**
+     * 由子类去实现消息异步
+     * @param msg
+     */
+    protected abstract void handleMsgByChild(Message msg);
 
     /**
      * 关联SwipeRefreshLayout 和 RecyclerView

@@ -2,6 +2,7 @@ package com.zdfy.purereader.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -14,13 +15,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.zdfy.purereader.R;
+import com.zdfy.purereader.constant.Constant;
 import com.zdfy.purereader.ui.fragment.DouBanFragment;
 import com.zdfy.purereader.ui.fragment.NewsFragment;
 import com.zdfy.purereader.ui.fragment.PicFragment;
-import com.zdfy.purereader.ui.fragment.video.VideoFragment;
 import com.zdfy.purereader.ui.fragment.ZhiHuFragment;
+import com.zdfy.purereader.ui.fragment.video.VideoFragment;
 import com.zdfy.purereader.ui.qrcode.activity.MCaptureActivity;
+import com.zdfy.purereader.utils.SPUtils;
 import com.zdfy.purereader.utils.UiUtils;
+import com.zdfy.purereader.utils.UpdateUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NewsFragment mNewsFragment;
     private PicFragment mPicFragment;
     private VideoFragment mVideoFragment;
-
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +50,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ButterKnife.bind(this);
         initViews();
         initData();
+        if (((Boolean) SPUtils.get(MainActivity.this, Constant.AUTO_UPDATE, false))) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    UpdateUtils.CheckVersion(MainActivity.this);
+                }
+            }, 5000);
+        }
+
     }
+
     /**
      * 初始化数据
      */
     private void initData() {
-       
+
         mZhiHuFragment = new ZhiHuFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.fl_container, mZhiHuFragment);
@@ -62,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * 设置ToolBar标题
+     *
      * @param titleName
      */
     private void setToolBarTitle(String titleName) {
@@ -77,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
         mNavView.setNavigationItemSelectedListener(this);
     }
-    
+
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -86,6 +101,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super.onBackPressed();
         }
     }
+
+//    @Override
+//    protected void onRestart() {
+//        super.onRestart();
+//        initData();
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -99,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_qrcode) {
-            Log.i("info","-----------------------------");
+            Log.i("info", "-----------------------------");
             startActivity(new Intent(this, MCaptureActivity.class));
             return true;
         }
@@ -113,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         hideFragments(fragmentTransaction);
+//        mFlContainer.removeAllViews();
         if (id == R.id.nav_zhihu) {
             if (mZhiHuFragment == null) {
                 mZhiHuFragment = new ZhiHuFragment();
@@ -154,9 +176,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             setToolBarTitle(UiUtils.getString(R.string.ShiPingYueDu));
             fragmentTransaction.show(mVideoFragment);
 
-        } else if (id == R.id.nav_about) {
-
         }
+// else if (id == R.id.nav_about) {
+//
+//        }
         fragmentTransaction.commit();
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;

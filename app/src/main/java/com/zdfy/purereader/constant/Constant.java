@@ -10,7 +10,6 @@ public class Constant {
     public static final int STATE_LOAD_ERROR = 3;// 加载失败
     public static final int STATE_LOAD_EMPTY = 4;// 数据为空
     public static final int STATE_LOAD_SUCCESS = 5;// 加载成功
-
     ///////////////////Intent传递常量/////////////////////////////////////////////
     public static final String NEWS_BEAN = "news_bean";
     public static final String DOUBAN_BEAN = "douban_bean";
@@ -34,6 +33,8 @@ public class Constant {
     public static final String HASIN_SPALSH = "hasin_spalsh";
 
 
+    public static final String firToken = "a6bcf20248e36f78a6aa8cab24296238";
+    public static final String AUTO_UPDATE ="auto_update";
     /*-------------video--------------*/
     //每日精选
     public static final String VIDEO_DAILY = "http://baobab.wandoujia.com/api/v2/feed?num=2&udid=26868b32e808498db32fd51fb422d00175e179df&vc=83";

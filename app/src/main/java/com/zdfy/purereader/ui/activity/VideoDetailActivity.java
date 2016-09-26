@@ -13,6 +13,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.RequestManager;
 import com.zdfy.purereader.R;
+import com.zdfy.purereader.database.DBHelper;
+import com.zdfy.purereader.database.MDataBase;
 import com.zdfy.purereader.domain.VideoInfo;
 
 import butterknife.Bind;
@@ -45,6 +47,8 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
     private Priority priority = Priority.NORMAL;
     private VideoInfo.IssueListBean.ItemListBean itemListBean;
 
+    private MDataBase dataBase;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +74,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
 
     private void initData() {
         itemListBean = (VideoInfo.IssueListBean.ItemListBean) getIntent().getSerializableExtra("itemListBean");
+        dataBase = new MDataBase(this);
 
         /*picture*/
         String detail = itemListBean.getData().getCover().getDetail();
@@ -95,6 +100,9 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
         /*action*/
         int collectionNum = itemListBean.getData().getConsumption().getCollectionCount();
         setTxt(String.valueOf(collectionNum), Addfav);
+
+        Addfav.setSelected(dataBase.checkVideoItem(itemListBean.getData().getId()));
+
     }
 
 
@@ -114,13 +122,14 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.activity_video_detail_addfav:
-
                 if (Addfav.isSelected()) {
                     Addfav.setSelected(false);
                     /*取消收藏操作*/
+                    dataBase.delItem(itemListBean.getData().getId());
                 } else {
                     Addfav.setSelected(true);
                     /*收藏操作*/
+                    dataBase.addVideoItem(itemListBean.getData());
                 }
                 break;
             case R.id.activity_video_detail_addcache:

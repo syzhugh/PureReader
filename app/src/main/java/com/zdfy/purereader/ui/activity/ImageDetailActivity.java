@@ -1,5 +1,6 @@
 package com.zdfy.purereader.ui.activity;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -7,6 +8,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.provider.Settings;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +22,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
+import com.github.kayvannj.permission_utils.Func;
+import com.github.kayvannj.permission_utils.PermissionUtil;
 import com.zdfy.purereader.R;
 import com.zdfy.purereader.constant.Constant;
 import com.zdfy.purereader.utils.ToastUtils;
@@ -33,7 +39,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ImageDetailActivity extends AppCompatActivity {
-
+    private static final int REQUEST_CODE_STORAGE = 2;
+    private static final String PACKAGE_URL_SCHEME = "package:";
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
+    private PermissionUtil.PermissionRequestObject mStoragePermissionRequest;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.iv_detail)
@@ -46,49 +56,29 @@ public class ImageDetailActivity extends AppCompatActivity {
     private String mFileurl;
     //是否已经保存过文件
     private File isHasSavedFile;
-
     private boolean isClickShare = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         picUrl = getIntent().getStringExtra(Constant.PIC_URL);
         picName = getIntent().getStringExtra(Constant.PIC_CREATE);
-
-        try {
-            externalStorageDirectory = Environment.getExternalStorageDirectory();
-            pureReaderDir = new File(externalStorageDirectory, "PureReader");
-            if (!pureReaderDir.exists()) {
-                pureReaderDir.mkdir();
-            }
-            mFileurl = pureReaderDir + "/" + picName;
-            isHasSavedFile = new File(pureReaderDir, picName + ".jpg");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         setContentView(R.layout.activity_image_detail);
         ButterKnife.bind(this);
+        mStoragePermissionRequest = PermissionUtil.with(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE).onAllGranted(
+                new Func() {
+                    @Override
+                    protected void call() {
+                        doOnPermissionGranted();
+                    }
+                }).onAnyDenied(
+                new Func() {
+                    @Override
+                    protected void call() {
+                        doOnPermissionDenied();
+                    }
+                }).ask(REQUEST_CODE_STORAGE);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        if (isHasSavedFile.exists()) {
-            System.out.println("glideexits~~~~~~~~~~~~~~~~~~~~~~");
-            Glide.with(this)
-                    .load(isHasSavedFile)
-                    .centerCrop()
-                    .priority(Priority.HIGH)
-                    .into(mIvDetail);
-        } else {
-            System.out.println("glide~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            Glide.with(this)
-                    .load(picUrl)
-                    .asBitmap()
-                    .centerCrop()
-                    .priority(Priority.HIGH)
-                    .into(mIvDetail);
-        }
-
         mIvDetail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -110,6 +100,57 @@ public class ImageDetailActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    private void initFiles() {
+        try {
+            externalStorageDirectory = Environment.getExternalStorageDirectory();
+            pureReaderDir = new File(externalStorageDirectory, "PureReader");
+            if (!pureReaderDir.exists()) {
+                pureReaderDir.mkdir();
+            }
+            mFileurl = pureReaderDir + "/" + picName;
+            isHasSavedFile = new File(pureReaderDir, picName + ".jpg");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void doOnPermissionDenied() {
+        Snackbar.make(mCoordinatorLayout, "读取存储空间是必须的", Snackbar.LENGTH_INDEFINITE).setAction("前去设置", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.setData(Uri.parse(PACKAGE_URL_SCHEME + getPackageName()));
+                startActivity(intent);
+            }
+        }).show();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (mStoragePermissionRequest != null) {
+            mStoragePermissionRequest.ask(REQUEST_CODE_STORAGE);
+        }
+    }
+
+    private void doOnPermissionGranted() {
+        initFiles();
+        if (isHasSavedFile.exists()) {
+            Glide.with(this)
+                    .load(isHasSavedFile)
+                    .centerCrop()
+                    .priority(Priority.HIGH)
+                    .into(mIvDetail);
+        } else {
+            Glide.with(this)
+                    .load(picUrl)
+                    .asBitmap()
+                    .centerCrop()
+                    .priority(Priority.HIGH)
+                    .into(mIvDetail);
+        }
     }
 
     /**
@@ -180,6 +221,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
         shareIntent.setType("image/*");
         startActivity(Intent.createChooser(shareIntent, "分享到"));
+
     }
 
     @Override
@@ -197,6 +239,7 @@ public class ImageDetailActivity extends AppCompatActivity {
             //此时点击的是分享按钮
             isClickShare = true;
             shareSingleImage();
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -205,5 +248,12 @@ public class ImageDetailActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_pic, menu);
         return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (mStoragePermissionRequest != null)
+            mStoragePermissionRequest.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

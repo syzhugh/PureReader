@@ -41,6 +41,15 @@
                 android:textColor="#fff"
                 android:textSize="13sp" />
 
+            <TextView
+                android:id="@+id/item_video_finddetail_addfav"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="10dp"
+                android:drawableLeft="@drawable/video_addfav"
+                android:textColor="#fff" />
         </RelativeLayout>
 
     </RelativeLayout>
@@ -50,6 +59,7 @@
         android:layout_width="match_parent"
         android:layout_height="240dp"
         android:layout_below="@id/item_video_finddetail_info" />
+
 
     <ImageView
         android:id="@+id/item_video_finddetail_shade"

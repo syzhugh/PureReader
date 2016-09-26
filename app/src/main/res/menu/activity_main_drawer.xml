@@ -22,9 +22,9 @@
             android:icon="@drawable/video"
             android:title="@string/ShiPingYueDu"/>
         <item
-            android:id="@+id/nav_about"
-            android:icon="@drawable/about"
-            android:title="@string/GuanYu"/>
+            android:id="@+id/nav_seetings"
+            android:icon="@drawable/settings"
+            android:title="@string/settings"/>
     </group>
     <!--<item android:title="Communicate">-->
     <!--<menu>-->

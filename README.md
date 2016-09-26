@@ -1,6 +1,7 @@
 #开发说明书
 * 注解使用 ButterKnife 7.0.1 
 * 
+<<<<<<< .merge_file_a10556
         compile 'com.jakewharton:butterknife:7.0.1'
 
 * api文档
@@ -14,3 +15,6 @@
 		Page			页数，默认1。每页最多20条记录
 		maxResult		每页返回记录数，值在0-100之间
 		needAllList		是否需要最全的返回资料（比较复杂，可以先不用）。包括每一段文				本和每一张图。用list的形式返回。默认是1，改成0
+=======
+        compile 'com.jakewharton:butterknife:7.0.1'
+>>>>>>> .merge_file_a05704

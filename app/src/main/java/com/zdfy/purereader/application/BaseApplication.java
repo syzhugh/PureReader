@@ -3,6 +3,8 @@ package com.zdfy.purereader.application;
 import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
+
+import im.fir.sdk.FIR;
 /**
  * Created by ZhangPeng on 2016/9/5.
  */
@@ -18,6 +20,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        FIR.init(this);
 //        x.Ext.init(this);
         context = getApplicationContext();
         handler = new Handler();

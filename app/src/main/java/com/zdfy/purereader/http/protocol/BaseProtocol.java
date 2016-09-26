@@ -1,11 +1,10 @@
 package com.zdfy.purereader.http.protocol;
 
-import com.zdfy.purereader.constant.ApiConstants;
 import com.zdfy.purereader.utils.HttpUtils;
 import com.zdfy.purereader.utils.IOUtils;
+import com.zdfy.purereader.utils.MD5Encoder;
 import com.zdfy.purereader.utils.StringUtils;
 import com.zdfy.purereader.utils.UiUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,10 +16,10 @@ import java.io.IOException;
  * Created by ZhangPeng on 2016/9/7.
  */
 public abstract class BaseProtocol<T> {
-    public T getData(String UrlForName,int getOrPostCode) {
+    public T getData(String UrlForName, int getOrPostCode) {
         String result = getCache(UrlForName);
         if (StringUtils.isEmpty(result)) {
-            result = getDataFromNet(UrlForName,getOrPostCode);
+            result = getDataFromNet(UrlForName, getOrPostCode);
         }
         if (result != null) {
             return parseData(result);
@@ -37,19 +36,20 @@ public abstract class BaseProtocol<T> {
 
     /**
      * 从网络获取数据,由子类实现
+     *
      * @param urlForName
      * @param getOrPostCode 区分是get(用2 )  post(用1)
      * @return
      */
-    protected String getDataFromNet(String urlForName,int getOrPostCode) {
-        if (getOrPostCode==1) {
+    protected String getDataFromNet(String urlForName, int getOrPostCode) {
+        if (getOrPostCode == 1) {
             String result = HttpUtils.doPost(urlForName, null);
             if (!StringUtils.isEmpty(result)) {
                 setCache(urlForName, result);
                 return result;
             }
         }
-        if (getOrPostCode==2) {
+        if (getOrPostCode == 2) {
             String result = HttpUtils.doGet(urlForName);
             if (!StringUtils.isEmpty(result)) {
                 System.out.println("BaseProtocol" + urlForName);
@@ -67,9 +67,14 @@ public abstract class BaseProtocol<T> {
      * @param json       json串为value
      */
     public void setCache(String UrlForName, String json) {
-        UrlForName = ApiConstants.ModifyCacheUrl(UrlForName);
+        System.out.println("setCache~~"+UrlForName);
         File cacheDir = UiUtils.getContext().getCacheDir();
-        File cacheFile = new File(cacheDir, UrlForName);
+        File cacheFile = null;
+        try {
+            cacheFile = new File(cacheDir, MD5Encoder.encode(UrlForName));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         FileWriter fw = null;
         try {
             fw = new FileWriter(cacheFile);
@@ -84,6 +89,7 @@ public abstract class BaseProtocol<T> {
             IOUtils.close(fw);
         }
     }
+
     /**
      * 读取缓存
      *
@@ -91,11 +97,14 @@ public abstract class BaseProtocol<T> {
      * @return
      */
     public String getCache(String UrlForName) {
-        UrlForName = ApiConstants.ModifyCacheUrl(UrlForName);
         File cacheDir = UiUtils.getContext().getCacheDir();
-        File cacheFile = new File(cacheDir, UrlForName);
+        File cacheFile = null;
+        try {
+            cacheFile = new File(cacheDir, MD5Encoder.encode(UrlForName));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (cacheFile.exists()) {
-            System.out.println("cacheFile.exists......");
             BufferedReader br = null;
             try {
                 br = new BufferedReader(new FileReader(cacheFile));

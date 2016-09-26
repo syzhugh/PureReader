@@ -113,11 +113,11 @@ public class VFindFragment extends BaseFragment {
         getDataFromNet(Constant.VIDEO_FIND_MORE);
     }
 
-    private void getDataFromNet(final String dailyUrl) {
+    private void getDataFromNet(final String findUrl) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                List<VideoCategoryInfo> data = categoryProtocol.getData(dailyUrl, 2);
+                List<VideoCategoryInfo> data = categoryProtocol.getData(findUrl, 2);
                 Message message = mHandler.obtainMessage();
                 message.obj = data;
                 mHandler.sendMessage(message);
