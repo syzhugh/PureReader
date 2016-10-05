@@ -1,5 +1,6 @@
 package com.zdfy.purereader.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -56,7 +57,7 @@ public class VideoFindInfo {
         this.itemList = itemList;
     }
 
-    public static class ItemListBean {
+    public static class ItemListBean implements Serializable{
         /**
          * category : 搞笑
          * collected : false
@@ -97,7 +98,7 @@ public class VideoFindInfo {
             this.type = type;
         }
 
-        public static class DataBean {
+        public static class DataBean implements Serializable{
             private String category;
             private boolean collected;
             /**
@@ -298,7 +299,7 @@ public class VideoFindInfo {
                 this.tags = tags;
             }
 
-            public static class ConsumptionBean {
+            public static class ConsumptionBean implements Serializable{
                 private int collectionCount;
                 private int replyCount;
                 private int shareCount;
@@ -328,7 +329,7 @@ public class VideoFindInfo {
                 }
             }
 
-            public static class CoverBean {
+            public static class CoverBean implements Serializable{
                 private String blurred;
                 private String detail;
                 private String feed;
@@ -358,7 +359,7 @@ public class VideoFindInfo {
                 }
             }
 
-            public static class ProviderBean {
+            public static class ProviderBean implements Serializable{
                 private String alias;
                 private String icon;
                 private String name;
@@ -388,7 +389,7 @@ public class VideoFindInfo {
                 }
             }
 
-            public static class WebUrlBean {
+            public static class WebUrlBean implements Serializable{
                 private String forWeibo;
                 private String raw;
 
@@ -409,7 +410,7 @@ public class VideoFindInfo {
                 }
             }
 
-            public static class PlayInfoBean {
+            public static class PlayInfoBean implements Serializable{
                 private int height;
                 private String name;
                 private String type;
@@ -457,7 +458,7 @@ public class VideoFindInfo {
                 }
             }
 
-            public static class TagsBean {
+            public static class TagsBean implements Serializable{
                 private String actionUrl;
                 private int id;
                 private String name;

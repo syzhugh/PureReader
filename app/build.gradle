@@ -14,18 +14,13 @@ android {
     }
     buildTypes {
         release {
-            // 混淆
-            minifyEnabled true
-            // Zipalign优化
-            zipAlignEnabled true
-            // 移除无用的resource文件
-            shrinkResources true
-            // 前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     sourceSets {
         main {
+
             jniLibs.srcDirs = ['libs']
         }
     }
@@ -38,6 +33,7 @@ dependencies {
     compile 'com.android.support:design:24.2.0'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.youth.banner:banner:+'
+    //    compile 'org.xutils:xutils:3.3.36'
     compile 'com.android.support:cardview-v7:24.2.0'
     compile 'com.alibaba:fastjson:1.2.14'
     compile 'com.nineoldandroids:library:2.4.0'
@@ -46,7 +42,9 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile 'za.co.riggaroo:materialhelptutorial:1.0.1'
+<<<<<<< Temporary merge branch 1
     compile 'com.github.kayvannj:PermissionUtils:1.0.2@aar'
     compile 'im.fir:fir-sdk:latest.integration@aar'
-    compile 'fm.jiecao:jiecaovideoplayer:4.6.5'
+    compile 'fm.jiecao:jiecaovideoplayer:4.7.0'
+
 }

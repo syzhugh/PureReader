@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.RequestManager;
 import com.zdfy.purereader.R;
+import com.zdfy.purereader.database.MDataBase;
 import com.zdfy.purereader.domain.VideoFindInfo;
 
 import java.util.List;
@@ -35,12 +36,14 @@ public class VideoFindDetailAdapter extends RecyclerView.Adapter {
     private List<VideoFindInfo.ItemListBean> list;
     private LayoutInflater inflater;
     private RequestManager manager;
+    private MDataBase dataBase;
 
     public VideoFindDetailAdapter(Context context, List<VideoFindInfo.ItemListBean> list) {
         this.context = context;
         this.list = list;
         inflater = LayoutInflater.from(context);
         manager = Glide.with(context);
+        dataBase = new MDataBase(context);
     }
 
     @Override
@@ -53,8 +56,8 @@ public class VideoFindDetailAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        ViewHolder viewHolder = (ViewHolder) holder;
-        VideoFindInfo.ItemListBean.DataBean bean = list.get(position).getData();
+        final ViewHolder viewHolder = (ViewHolder) holder;
+        final VideoFindInfo.ItemListBean.DataBean bean = list.get(position).getData();
         manager.load(bean.getCover().getBlurred())
                 .centerCrop()
                 .priority(Priority.NORMAL)
@@ -63,9 +66,20 @@ public class VideoFindDetailAdapter extends RecyclerView.Adapter {
         viewHolder.description.setText(bean.getDescription());
         viewHolder.toplay.setUp(bean.getPlayUrl(), JCVideoPlayer.SCREEN_LAYOUT_LIST, "");
 
+        viewHolder.addFav.setSelected(dataBase.checkVideoItem(bean.getId()));
+        viewHolder.addFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (viewHolder.addFav.isSelected()) {
+                    viewHolder.addFav.setSelected(dataBase.delItem(bean.getId()));
+                } else {
+                    viewHolder.addFav.setSelected(dataBase.addVideoItem(bean));
+                }
+            }
+        });
+
         if (position == 0)
             ((ViewHolder) holder).getShade().setAlpha(0f);
-
     }
 
     @Override
@@ -86,6 +100,9 @@ public class VideoFindDetailAdapter extends RecyclerView.Adapter {
 
         @Bind(R.id.item_video_finddetail_shade)
         ImageView shade;
+
+        @Bind(R.id.item_video_finddetail_addfav)
+        TextView addFav;
 
         private int videoProgress = 0;
 
