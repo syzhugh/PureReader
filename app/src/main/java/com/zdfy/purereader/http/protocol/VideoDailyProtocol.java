@@ -1,5 +1,7 @@
 package com.zdfy.purereader.http.protocol;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 import com.zdfy.purereader.domain.VideoInfo;
 
@@ -22,10 +24,20 @@ public class VideoDailyProtocol extends BaseProtocol<List<VideoInfo.IssueListBea
             lastPage = info.getNextPageUrl();
 
         ArrayList<VideoInfo.IssueListBean.ItemListBean> list = new ArrayList<>();
-        list.addAll(info.getIssueList().get(0).getItemList());
-        list.addAll(info.getIssueList().get(1).getItemList());
+
+        addToList(list, info.getIssueList().get(0).getItemList());
+        addToList(list, info.getIssueList().get(1).getItemList());
 
         return list;
+    }
+
+    private void addToList(ArrayList<VideoInfo.IssueListBean.ItemListBean> list, List<VideoInfo.IssueListBean.ItemListBean> itemList) {
+        for (int i = 0; i < itemList.size(); i++) {
+            String dataType = itemList.get(i).getType();
+            if ("video".equals(dataType) || "textHeader".equals(dataType)) {
+                list.add(itemList.get(i));
+            }
+        }
     }
 
     public String getLastPage() {

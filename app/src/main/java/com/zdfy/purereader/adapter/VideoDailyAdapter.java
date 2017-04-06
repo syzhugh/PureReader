@@ -77,13 +77,18 @@ public class VideoDailyAdapter extends RecyclerView.Adapter {
             ((MHolder0) holder).itemVideoType.setText(
                     dataBean.getCategory() + " / " + (duration / 60) + ":" + (duration % 60));
 
+            Log.i("test", "type:" + (list.get(position).getType()));
+            Log.i("test", "dataBean:" + (dataBean == null));
+            Log.i("test", "getCover:" + (dataBean.getCover() == null));
+            Log.i("test", "getDetail:" + (dataBean.getCover().getDetail() == null));
+
 
             Glide.with(context)
                     .load(dataBean.getCover().getDetail())
-                    .priority(Priority.LOW)
+                    .priority(Priority.NORMAL)
                     .centerCrop()
-                    .into(((MHolder0) holder).itemVideoImg)
-            ;
+                    .into(((MHolder0) holder).itemVideoImg);
+
 
             if (listener != null) {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
